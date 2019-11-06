@@ -20,3 +20,6 @@ class Candidate(models.Model):
 class Answer(models.Model):
 	candidate_id = models.ForeignKey('Candidate', on_delete=models.CASCADE, related_name='candidate_answers')
 	answer = models.TextField()
+
+	def __str__(self):
+		return f"{self.candidate_id} - {self.answer}"
