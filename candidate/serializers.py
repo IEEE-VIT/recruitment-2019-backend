@@ -28,3 +28,6 @@ class CandidateSerializer(serializers.HyperlinkedModelSerializer):
 			return candidate
 		else:
 			return Candidate(**validated_data)
+
+
+
