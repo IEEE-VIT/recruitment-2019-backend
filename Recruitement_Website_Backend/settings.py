@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'candidate.apps.CandidateConfig',
+
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
