@@ -44,5 +44,6 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('', include('candidate.urls')),
+    path('', include('rsvp.urls')),
 
 ]
