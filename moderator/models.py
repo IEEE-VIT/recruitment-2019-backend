@@ -1,3 +1,5 @@
+from django.db import models
+
 # Todo You haven't imported models - Sukriti
 
 
@@ -8,6 +10,6 @@ class Moderator(models.Model):
 
     def save(self, *args, **kwargs):
         # Todo What is a moderator
-        super(moderator, self).save(*args, **kwargs)
+        super(Moderator,self).save(*args, **kwargs)
 
     # Todo Add a '__str__' function - Sukriti
