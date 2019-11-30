@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from candidate.models import Rsvp
+from .models import RSVP
 
-admin.site.register(Rsvp)
+admin.site.register(RSVP)
 

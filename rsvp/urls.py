@@ -6,5 +6,5 @@ from .views import RsvpView
 app_name = "rsvp"
 
 urlpatterns = [
-    path('rsvp/', RsvpView.as_view()),
+    path('rsvp', RsvpView.as_view()),
 ]

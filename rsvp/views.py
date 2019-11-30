@@ -1,19 +1,20 @@
 # Create your views here.
+from rest_framework.generics import GenericAPIView, CreateAPIView
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Q
 
+from rsvp.models import RSVP
 from .serializers import RSVPSerializer
 
 
-class RsvpView(APIView):
+class RsvpView(CreateAPIView):
     permission_classes = [AllowAny]
+    serializer_class = RSVPSerializer
 
-    def post(self, request):
-
-        serializer = RSVPSerializer(data=request.data)
+    def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save()
-            return Response({"success": "RSVP Received"}, status=201)
-        else:
-            return Response({'Failure': "Form Validation Failed"}, status=400)
+
