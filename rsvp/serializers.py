@@ -1,14 +1,10 @@
 from rest_framework import serializers
 
-from .models import Rsvp
+from .models import RSVP
 
 
-class RsvpSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
-    reg_no = serializers.CharField(max_length=9)
-    email = serializers.EmailField()
-    contact = serializers.BigIntegerField()
+class RSVPSerializer(serializers.ModelSerializer):
 
-
-    def create(self, validated_data):
-        return Rsvp.objects.create(**validated_data)
+    class Meta:
+        model = RSVP
+        exclude = ['timestamp']
