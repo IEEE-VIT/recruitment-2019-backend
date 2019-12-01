@@ -37,12 +37,13 @@ schema_view = get_schema_view(
 urlpatterns = [
     # Browable API endpoints
 
+    path('admin/', admin.site.urls),
+
+    path('', include('candidate.urls')),
+    path('', include('rsvp.urls')),
+
     re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
-    path('admin/', admin.site.urls),
-    path('v1/', include('candidate.urls')),
-    path('v1/', include('rsvp.urls')),
 
 ]
