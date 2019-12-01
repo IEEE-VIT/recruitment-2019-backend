@@ -39,7 +39,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
-    path('', include('candidate.urls')),
+    # path('', include('candidate.urls')),
     path('', include('rsvp.urls')),
 
     re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
