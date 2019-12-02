@@ -61,6 +61,9 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata'
+}
 
 ROOT_URLCONF = 'Recruitement_Website_Backend.urls'
 
