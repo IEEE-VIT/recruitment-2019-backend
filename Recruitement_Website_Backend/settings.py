@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'j!3+^8uj9@-16y4yh&d(c+*%o#nzqcq$r%6re5omz#qe7g=l)r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 DEBUG_PROPAGATE_EXCEPTIONS = False
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'recaptcha',
     'corsheaders',
     'candidate.apps.CandidateConfig',
     'interviewer.apps.InterviewerConfig',
@@ -58,16 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost",
-    "http://css.ieeevit.com",
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost",
-    "http://css.ieeevit.com",
-
-]
 
 ROOT_URLCONF = 'Recruitement_Website_Backend.urls'
 
@@ -141,3 +134,6 @@ if 'DATABASE_URL' in os.environ:
     import dj_database_url
 
     DATABASES = {'default': dj_database_url.config()}
+
+
+GR_CAPTCHA_SECRET_KEY = "6LfXrsUUAAAAAP54OTxaF01x2pXjomAhAusK8j21"
