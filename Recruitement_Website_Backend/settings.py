@@ -59,12 +59,12 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:8080",
+    "http://localhost",
     "http://css.ieeevit.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8080",
+    "http://localhost",
     "http://css.ieeevit.com",
 
 ]
