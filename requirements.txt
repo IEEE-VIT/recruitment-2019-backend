@@ -20,7 +20,9 @@ Jinja2==2.10.3
 MarkupSafe==1.1.1
 odict==1.7.0
 packaging==19.2
+psycopg2==2.8.4
 pyparsing==2.4.4
+python-dotenv==0.10.3
 pytz==2019.3
 requests==2.22.0
 ruamel.yaml==0.16.5
