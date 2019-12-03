@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'recaptcha',
+    "rest_framework_recaptcha",
     'corsheaders',
     'candidate.apps.CandidateConfig',
     'interviewer.apps.InterviewerConfig',
@@ -152,4 +152,4 @@ if 'DATABASE_URL' in os.environ:
     DATABASES = {'default': dj_database_url.config()}
 
 
-GR_CAPTCHA_SECRET_KEY = os.environ.get("GR_CAPTCHA_SECRET_KEY")
+DRF_RECAPTCHA_SECRET_KEY = os.environ.get("GR_CAPTCHA_SECRET_KEY")

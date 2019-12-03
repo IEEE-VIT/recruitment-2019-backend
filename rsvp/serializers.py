@@ -1,11 +1,11 @@
-from recaptcha.fields import ReCaptchaField
 from rest_framework import serializers
+from rest_framework_recaptcha.fields import ReCaptchaField
 
 from .models import RSVP
 
 
 class RSVPSerializer(serializers.ModelSerializer):
-    recaptcha = ReCaptchaField(write_only=True)
+    recaptcha = ReCaptchaField()
 
     class Meta:
         model = RSVP
