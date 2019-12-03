@@ -1,9 +1,10 @@
 import django_filters
-from requests import Response
+from django.core.mail import send_mail
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
 
 from candidate.models import Candidate
 from candidate.serializers import CandidateSerializer
