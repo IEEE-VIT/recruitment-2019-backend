@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import django_heroku
 
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,12 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'j!3+^8uj9@-16y4yh&d(c+*%o#nzqcq$r%6re5omz#qe7g=l)r'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-DEBUG_PROPAGATE_EXCEPTIONS = False
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -45,7 +47,7 @@ INSTALLED_APPS = [
 	'allauth',
 	'allauth.account',
 	'rest_auth.registration',
-	'recaptcha',
+	'rest_framework_recaptcha',
 	'corsheaders',
 	'candidate.apps.CandidateConfig',
 	'recruiter.apps.RecruiterConfig',
@@ -73,6 +75,7 @@ REST_FRAMEWORK = {
 		'rest_framework.authentication.BasicAuthentication',
 		'rest_framework.authentication.TokenAuthentication'
 	),
+	'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata'
 }
 
 AUTH_USER_MODEL = 'recruiter.User'
@@ -89,6 +92,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
 
 ROOT_URLCONF = 'Recruitement_Website_Backend.urls'
 
@@ -162,6 +166,7 @@ if 'DATABASE_URL' in os.environ:
 
 	DATABASES = {'default': dj_database_url.config()}
 
-GR_CAPTCHA_SECRET_KEY = "6LfXrsUUAAAAAP54OTxaF01x2pXjomAhAusK8j21"
+
+DRF_RECAPTCHA_SECRET_KEY = os.environ.get("GR_CAPTCHA_SECRET_KEY")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
