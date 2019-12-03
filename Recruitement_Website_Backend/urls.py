@@ -42,7 +42,6 @@ urlpatterns = [
 
     # path('', include('candidate.urls')),
     path('', include(CandidateRouter.urls)),
-    path('', include('rsvp.urls')),
     path('recruiter/', include('recruiter.urls')),
 
     re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

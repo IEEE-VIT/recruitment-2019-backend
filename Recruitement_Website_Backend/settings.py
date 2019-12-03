@@ -51,7 +51,6 @@ INSTALLED_APPS = [
 	'corsheaders',
 	'candidate.apps.CandidateConfig',
 	'recruiter.apps.RecruiterConfig',
-	'rsvp.apps.RsvpConfig',
 	'drf_yasg',
 ]
 
