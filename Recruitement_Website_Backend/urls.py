@@ -41,7 +41,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # path('', include('candidate.urls')),
-    path('candidate/', include(CandidateRouter.urls)),
+    path('', include(CandidateRouter.urls)),
     path('', include('rsvp.urls')),
     path('recruiter/', include('recruiter.urls')),
 
