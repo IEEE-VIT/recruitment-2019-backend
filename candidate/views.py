@@ -10,7 +10,7 @@ from candidate.models import Candidate
 from candidate.serializers import CandidateSerializer
 
 
-class CandidateViewset(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
+class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     lookup_field = 'id'
