@@ -40,3 +40,4 @@ class CandidateSerializer(WritableNestedModelSerializer):
 		return fields
 
 
+

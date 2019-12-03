@@ -20,6 +20,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from candidate.urls import CandidateRouter
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -39,7 +40,8 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
-    path('', include('candidate.urls')),
+    # path('', include('candidate.urls')),
+    path('candidate/', include(CandidateRouter.urls)),
     path('', include('rsvp.urls')),
     path('recruiter/', include('recruiter.urls')),
 

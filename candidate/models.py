@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Candidate(models.Model):
@@ -42,8 +43,10 @@ class Candidate(models.Model):
     is_active = models.BooleanField(default=True)
     interests = models.CharField(max_length=5, choices=INTERESTS_CHOICES)
     tech_interests = models.CharField(max_length=2, choices=TECH_INTEREST_CHOICES)
-    email_sent = models.BooleanField(default=False)
-
+    times_snoozed = models.IntegerField(default=0)
+    called = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(default=timezone.now, editable=False)
+    room_number = models.IntegerField()
     def get_absolute_url(self):
         return reverse('candidate:candidate_detail', args=[self.reg_no])
 
