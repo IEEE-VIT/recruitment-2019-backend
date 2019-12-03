@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from candidate.views import CandidateViewSet
+from candidate.views import CandidateViewSet, send_email_to_candidate
 
 candidate_list = CandidateViewSet.as_view({
     'get': 'list',
@@ -17,4 +17,5 @@ candidate_detail = CandidateViewSet.as_view({
 urlpatterns = format_suffix_patterns([
     path('candidate/', candidate_list, name='candidate-list'),
     path('candidate/<int:pk>/', candidate_detail, name='candidate-detail'),
+    path('candidate/<int:pk>/send_mail/', send_email_to_candidate, name='candidate-email')
 ])

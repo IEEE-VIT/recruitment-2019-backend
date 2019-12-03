@@ -18,18 +18,25 @@ class CandidateSerializer(WritableNestedModelSerializer):
 
 	class Meta:
 		model = Candidate
-		fields = ['url', 'id', 'name', 'contact', 'reg_no', 'email', 'hostel', 'grade', 'comment', 'answers']
+		fields = ['url', 'id', 'name', 'contact', 'reg_no', 'email', 'hostel', 'is_active', 'interests', 'tech_interests', 'answers', 'grade', 'comment']
 
-	def create(self, validated_data):
-		print(validated_data)
-		if 'answers' in validated_data.keys():
-			answers_data = validated_data.pop('answers')
-			candidate = Candidate.objects.create(**validated_data)
-			for answer_data in answers_data:
-				Answer.objects.create(candidate_id=candidate, **answer_data)
-			return candidate
-		else:
-			return Candidate(**validated_data)
+	def get_fields(self, *args, **kwargs):
+		fields = super(CandidateSerializer, self).get_fields(*args, **kwargs)
+		request = self.context.get('request', None)
+		if request and getattr(request, 'method', None) == "PATCH":
+			fields['name'].read_only = True
+			fields['contact'].read_only = True
+			fields['reg_no'].read_only = True
+			fields['email'].read_only = True
+			fields['hostel'].read_only = True
+			fields['interests'].read_only = True
+			fields['tech_interests'].read_only = True
+			fields['answers'].read_only = True
 
+		if request and getattr(request, 'method', None) == 'POST':
+			fields['grade'].read_only = True
+			fields['comment'].read_only = True
+
+		return fields
 
 

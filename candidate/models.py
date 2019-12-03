@@ -1,7 +1,37 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Candidate(models.Model):
+
+    Management = 'Man'
+    Technical = 'Tech'
+    Design = 'Des'
+    Filmmaking = 'Film'
+
+    Machine_Learning = 'ML'
+    Frontend = 'FE'
+    Backend = 'BE'
+    Electronics = 'EL'
+    Cybersec = 'CS'
+    Competitve_Coding = 'CC'
+
+    INTERESTS_CHOICES =[
+        (Management, 'Management'),
+        (Technical, 'Technical'),
+        (Design, 'Design'),
+        (Filmmaking, 'Filmmaking')
+    ]
+
+    TECH_INTEREST_CHOICES = [
+        (Machine_Learning, 'Machine Learning'),
+        (Frontend, 'Frontend'),
+        (Backend, 'Backend'),
+        (Electronics, 'Electronics'),
+        (Cybersec, 'Cybersec'),
+        (Competitve_Coding, 'Competitive Coding')
+    ]
+
     name = models.CharField(max_length=100)
     contact = models.BigIntegerField()
     reg_no = models.CharField(max_length=9)
@@ -9,6 +39,13 @@ class Candidate(models.Model):
     hostel = models.CharField(max_length=10)
     grade = models.CharField(max_length=10, blank=True)
     comment = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    interests = models.CharField(max_length=5, choices=INTERESTS_CHOICES)
+    tech_interests = models.CharField(max_length=2, choices=TECH_INTEREST_CHOICES)
+    email_sent = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        return reverse('candidate:candidate_detail', args=[self.reg_no])
 
     def save(self, *args, **kwargs):
         super(Candidate, self).save(*args, **kwargs)
