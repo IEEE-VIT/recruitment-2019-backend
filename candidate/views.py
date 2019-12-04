@@ -77,22 +77,25 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
         'timestamp')
     serializer_class = CandidateSerializer
     throttle_classes = [AnonRateThrottle]
+    filter_backends = []
 
     def get_queryset(self):
         candidate_interest = self.request.query_params.get('interest', None)
+        room_no = self.request.query_params.get('room_no', None)
         print(type(candidate_interest))
         if self.request.method == 'GET' and candidate_interest is not None:
             return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(interests__contains=candidate_interest).order_by(
+                'timestamp')
+        elif self.request.method == 'GET' and room_no is not None:
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(room_number=room_no).order_by(
                 'timestamp')
         else:
             return Candidate.objects.all()
 
 
-
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_description="Return A List Of All The Project Templates"
 ))
-
 @method_decorator(name='assign', decorator=swagger_auto_schema(
     operation_description="Endpoint To Assign Projects To Candidates and Also Any Modifications That May Be Mentioned."
 ))
