@@ -62,7 +62,7 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectTemplate
         fields = '__all__'
-        read_only_fields = '__all__'
+        read_only_fields = ['template_id', 'domain', 'title', 'body']
 
 
 class ProjectAssignSerializer(serializers.Serializer):
