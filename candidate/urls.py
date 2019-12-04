@@ -22,10 +22,10 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from rest_framework import routers
 
-from candidate.views import CandidateListViewset, CandidateViewSet
+from candidate.views import CandidateListViewSet, CandidateViewSet
 
 CandidateRouter = routers.DefaultRouter(trailing_slash=False)
 
 
-CandidateRouter.register(r'candidate/list', CandidateListViewset, "Candidate List Endpoints")
+CandidateRouter.register(r'candidate/list', CandidateListViewSet, "Candidate List Endpoints")
 CandidateRouter.register(r'candidate', CandidateViewSet, "Candidate Modification Endpoints")
