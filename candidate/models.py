@@ -46,3 +46,10 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"{self.candidate_id} - {self.answer}"
+
+
+class ProjectTemplate(models.Model):
+    template_id = models.CharField(max_length=4, primary_key=True)
+    domain = models.CharField(max_length=20)
+    title = models.TextField()
+    body = models.TextField()
