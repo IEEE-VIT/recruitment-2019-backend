@@ -6,14 +6,11 @@ from recruiter.models import User
 from recruiter.serializers import UserSerializer
 
 
-class RecruiterViewSet(viewsets.GenericViewSet, UpdateModelMixin, RetrieveModelMixin, CreateModelMixin):
+class RecruiterViewSet(viewsets.GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
 
 	queryset = User.objects.all()
+	permission_classes = [IsAuthenticated]
 	serializer_class = UserSerializer
 
-	def get_permissions(self):
-		if self.action == 'create':
-			permission_classes = [AllowAny]
-		else:
-			permission_classes = [IsAuthenticated]
-		return [permission() for permission in permission_classes]
+
+

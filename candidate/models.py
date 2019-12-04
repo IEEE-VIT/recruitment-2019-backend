@@ -21,6 +21,7 @@ class Candidate(models.Model):
     round_1_comment = models.TextField(blank=True)
     round_1_call = models.BooleanField(default=None)
 
+    # round_2_project_template = models.ForeignKey() ToDo: Add This Foreign Key
     round_2_project_modification = models.TextField(default=None)
     round_2_comment = models.TextField(default=None)
     round_2_project_completion = models.IntegerField(default=0)
