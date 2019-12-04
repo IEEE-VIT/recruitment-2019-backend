@@ -40,16 +40,16 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         except Candidate.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        if request.method == 'PATCH':
-            try:
-                # ToDo: Send Email to Candidate
-                candidate.email_sent = True
-                return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
-            except Exception as e:
-                print(f"Couldn't send email to candidate. Error: {e}")
-                candidate.times_snoozed += 1
-                candidate.save()
-                return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
+        try:
+            # ToDo: Send Email to Candidate
+            candidate.email_sent = True
+            return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
+        except Exception as e:
+            print(f"Couldn't send email to candidate. Error: {e}")
+            candidate.times_snoozed += 1
+            candidate.save()
+            return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
+
 
     def invalidate(self, request, **kwargs):
         candidate = Candidate.objects.get(id=kwargs['applicant_id'])
@@ -84,4 +84,3 @@ class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
             return Response({'detail': "The email has been sent to the candidate"}, status=201)
         else:
             return Response({'detail': "Invalid data received"}, status=400)
-
