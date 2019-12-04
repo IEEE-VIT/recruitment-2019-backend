@@ -1,5 +1,6 @@
 import django_filters
 from django.core.mail import send_mail
+from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
@@ -48,8 +49,8 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
                 print('Couldn\'t send email to candidate')
 
 
-class CandidateListViewset(viewsets.GenericViewSet, ListModelMixin):
-    queryset = Candidate.objects.filter(called=False).order_by('timestamp')
+class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
+    queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by('timestamp')
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['room_number', 'interests']
     serializer_class = CandidateSerializer
