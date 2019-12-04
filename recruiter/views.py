@@ -26,7 +26,9 @@ class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
 
 class AuthViewSet(ViewSet):
 
-	@action(methods=['post'], detail=False, url_name='registration')
+	permission_classes = [AllowAny]
+
+	@action(methods=['post'], detail=False, url_name='register')
 	@csrf_exempt
 	def register(self, request):
 		# Check for username exists

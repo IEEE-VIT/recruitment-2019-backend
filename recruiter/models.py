@@ -25,7 +25,7 @@ class Recruiter(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
+def create_auth_token(sender, instance, created=False, **kwargs):
 	if created:
 		token = Token.objects.create(user=instance)
 		return token.key
