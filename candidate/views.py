@@ -1,4 +1,3 @@
-import django_filters
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
@@ -10,7 +9,8 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
 from candidate.models import Candidate, ProjectTemplate
-from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer
+from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
+    AcceptRejectSerializer
 
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
@@ -27,6 +27,12 @@ from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer
 ))
 @method_decorator(name='invalidate', decorator=swagger_auto_schema(
     operation_description="After Snoozing Multiple Times, The Candidate May Be Made Inactive. This Endpoint Allows The Moderators To Do That"
+))
+@method_decorator(name='accept', decorator=swagger_auto_schema(
+    operation_description="This Endpoint Accepts The Candidate To The Next Round.",
+))
+@method_decorator(name='reject', decorator=swagger_auto_schema(
+    operation_description="This Endpoint Rejects The Candidate and Also Deactivates It.",
 ))
 class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
     throttle_classes = [AnonRateThrottle]
@@ -46,7 +52,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     @action(methods=['POST'], detail=True)
     def snooze(self, request, *args, **kwargs):
         try:
-            candidate = Candidate.objects.get(id=kwargs['candidate_id'])
+            candidate = self.get_object()
         except Candidate.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -62,11 +68,42 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 
     @action(methods=['POST'], detail=True)
     def invalidate(self, request, **kwargs):
-        candidate = Candidate.objects.get(id=kwargs['applicant_id'])
+        candidate = self.get_object()
         candidate.is_active = False
         # ToDo: Send Email to Candidate
         candidate.save()
         return Response({'detail': f"The candidate {candidate.reg_no} has been invalidated"}, status=200)
+
+    @action(methods=['POST'], detail=True, serializer_class=AcceptRejectSerializer)
+    def accept(self, request, **kwargs):
+        candidate = self.get_object()
+        round_no = request.data.get('round')
+        if round_no == 1:
+            candidate.round_1_call = True
+            candidate.save()
+            return Response({'detail': "Round 1 Rejected"}, status=200)
+        elif round_no == 2:
+            candidate.round_2_call = True
+            candidate.save()
+            return Response({'detail': "Round 2 Rejected"}, status=200)
+        else:
+            return Response({'detail': "Invalid Form Data"}, status=400)
+
+    @action(methods=['POST'], detail=True, serializer_class=AcceptRejectSerializer)
+    def reject(self, request, **kwargs):
+        candidate = self.get_object()
+        candidate.is_active = False
+        round_no = request.data.get('round')
+        if round_no == 1:
+            candidate.round_1_call = False
+            candidate.save()
+            return Response({'detail': "Round 1 Passed"}, status=200)
+        elif round_no == 2:
+            candidate.round_2_call = False
+            candidate.save()
+            return Response({'detail': "Round 2 Passed"}, status=200)
+        else:
+            return Response({'detail': "Invalid Form Data"}, status=400)
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
@@ -84,7 +121,8 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
         room_no = self.request.query_params.get('room_no', None)
         print(type(candidate_interest))
         if self.request.method == 'GET' and candidate_interest is not None:
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(interests__contains=candidate_interest).order_by(
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
+                interests__contains=candidate_interest).order_by(
                 'timestamp')
         elif self.request.method == 'GET' and room_no is not None:
             return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(room_number=room_no).order_by(

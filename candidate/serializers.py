@@ -62,10 +62,14 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectTemplate
         fields = '__all__'
-        read_only_fields = '__all__'
+        read_only_fields = ['template_id', 'domain', 'title', 'body']
 
 
 class ProjectAssignSerializer(serializers.Serializer):
     applicant_id = serializers.IntegerField(required=True)
     project_template_id = serializers.CharField(max_length=10, required=True)
     modification_body = serializers.CharField(allow_blank=True, max_length=10000)
+
+
+class AcceptRejectSerializer(serializers.Serializer):
+    round = serializers.IntegerField(required=True)
