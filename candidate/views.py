@@ -5,12 +5,14 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 
 from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer
 
 
 class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
+    throttle_classes = [AnonRateThrottle]
     serializer_class = CandidateSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
@@ -18,8 +20,9 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     filterset_fields = ['room_number', 'interests']
 
     def get_queryset(self):
+        candidate_interests = self.request.query_params.get('interest', None)
         if self.request.action == 'list':
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(interests__contains=candidate_interests).order_by(
                 'timestamp')
         else:
             return Candidate.objects.all()
@@ -49,7 +52,6 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             candidate.times_snoozed += 1
             candidate.save()
             return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
-
 
     def invalidate(self, request, **kwargs):
         candidate = Candidate.objects.get(id=kwargs['applicant_id'])

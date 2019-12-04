@@ -59,11 +59,15 @@ SITE_ID = 1
 REST_FRAMEWORK = {
 	'DEFAULT_THROTTLE_CLASSES': [
 		'rest_framework.throttling.AnonRateThrottle',
-		'rest_framework.throttling.UserRateThrottle'
+		'rest_framework.throttling.UserRateThrottle',
+		'rest_framework.throttling.ScopedRateThrottle'
 	],
+
 	'DEFAULT_THROTTLE_RATES': {
 		'anon': '10/min',
-		'user': '10/min'
+		'user': '10/min',
+		'candidate': '30/min',
+		'recruiter': '15/min'
 	},
 
 	'DEFAULT_PERMISSION_CLASSES': (
@@ -74,7 +78,11 @@ REST_FRAMEWORK = {
 		'rest_framework.authentication.BasicAuthentication',
 		'rest_framework.authentication.TokenAuthentication'
 	),
-	'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata'
+
+	'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+	'PAGE_SIZE': 20
 }
 
 AUTH_USER_MODEL = 'recruiter.User'
