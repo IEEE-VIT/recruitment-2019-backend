@@ -26,7 +26,9 @@ class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
 
 class AuthViewSet(ViewSet):
 
-	@action(methods=['post'], detail=False, url_name='registration')
+	permission_classes = [AllowAny]
+
+	@action(methods=['post'], detail=False, url_name='register')
 	@csrf_exempt
 	def register(self, request):
 		# Check for username exists
@@ -47,6 +49,7 @@ class AuthViewSet(ViewSet):
 		user.last_name = last_name
 		user.is_active = False
 		user.save()
+		print(user)
 		return Response(status=201)
 
 	@action(methods=['post'], detail=False, url_name='login')
@@ -58,13 +61,12 @@ class AuthViewSet(ViewSet):
 		username = request.data.get('username')
 		password = request.data.get('password')
 		user = authenticate(username=username, password=password)
-		print("User authenticated")
-
+		print(user)
 		if user is not None:
 			print("User exists")
 			if user.is_active:
 				print("User is active")
-				token = create_auth_token()
+				token = create_auth_token(user)
 				return Response({'token': token}, status=200)
 			else:
 				return Response({'message': 'Account not activated'}, status=400)
