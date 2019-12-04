@@ -22,10 +22,3 @@ class Recruiter(models.Model):
 	is_interviewer = models.BooleanField(default=False)
 	is_moderator = models.BooleanField(default=False)
 	room_no = models.CharField(max_length=10)
-
-
-@receiver(post_save, sender=User)
-def create_auth_token(sender, instance, created=False, **kwargs):
-	if created:
-		token = Token.objects.create(user=instance)
-		return token.key

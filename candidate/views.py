@@ -1,8 +1,11 @@
+import json
+
 import django_filters
+import requests
 from django.core.mail import send_mail
 from django.db.models import Q
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -34,33 +37,32 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
-    @action(methods=['POST'], detail=True)
-    def snooze(self, request, *args, **kwargs):
-        try:
-            candidate = Candidate.objects.get(id=kwargs['candidate_id'])
-        except Candidate.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    def send_email_to_candidate(self, request, candidate_email, subject, body, sender_email, *args, **kwargs):
 
-        if request.method == 'PATCH':
-            try:
-                subject = 'IEEE-VIT 2019 Recruitment'
-                message = f"Hi, {candidate.name}! Please report to {request.user.recruiter_set.all()}"
-                print(message)
-                send_mail(
-                    subject=subject,
-                    message=message,
-                    from_email='jaiswalsanskar078@gmail.com',
-                    recipient_list=[candidate.email]
+        try:
+            mail_url = 'https://justanothersender.herokuapp.com/sendEmailsExternal'
+            r = requests.post(
+                url=mail_url,
+                json=json.dumps(
+                    {
+                        "email": candidate_email,
+                        "html": body,
+                        "subject": subject,
+                        "sender": sender_email,
+                        "nameOfEmail": "IEEE-VIT Recruitments 2019",
+                        "secret": "RealDevillsWithIn"
+                    }
                 )
-                candidate.email_sent = True
-                return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
-            except Exception as e:
-                print(f"Couldn't send email to candidate. Error: {e}")
-                candidate.times_snoozed += 1
-                candidate.save()
-                return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
-            except:
-                print('Couldn\'t send email to candidate')
+            )
+            if r.status_code == 200:
+                print(r.content)
+                return Response({'detail': "Email has been sent to candidate"}, status=200)
+            else:
+                print(r.content)
+                return Response({'message': "Email could not been sent to candidate"}, status=400)
+        except Exception as e:
+            print(f"Couldn't send email to candidate. Error: {e}")
+            return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'}, status=400)
 
 
 class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
