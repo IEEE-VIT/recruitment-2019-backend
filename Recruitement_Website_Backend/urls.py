@@ -19,6 +19,7 @@ from django.urls import path, include, re_path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework.authtoken.views import obtain_auth_token
 
 from candidate.urls import CandidateRouter
 
@@ -42,6 +43,7 @@ urlpatterns = [
 
     # path('', include('candidate.urls')),
     path('', include(CandidateRouter.urls)),
+    path('recruiter/login', obtain_auth_token),
     path('recruiter/', include('recruiter.urls')),
 
     re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

@@ -12,10 +12,18 @@ from candidate.serializers import CandidateSerializer
 
 
 class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
-    queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['room_number', 'interests']
+
+    def get_queryset(self):
+        if self.request.action == 'list':
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
+                'timestamp')
+        else:
+            return Candidate.objects.all()
 
     def get_permissions(self):
         if self.action == 'create':
@@ -35,7 +43,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 
         if request.method == 'PATCH':
             try:
-                subject = 'IEEE-VIT 2019 Recruitments'
+                subject = 'IEEE-VIT 2019 Recruitment'
                 message = f"Hi, {candidate.name}! Please report to {request.user.recruiter_set.all()}"
                 print(message)
                 send_mail(
@@ -61,4 +69,3 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['room_number', 'interests']
     serializer_class = CandidateSerializer
-

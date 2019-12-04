@@ -49,27 +49,3 @@ class AuthViewSet(ViewSet):
 		user.save()
 		return Response(status=201)
 
-	@action(methods=['post'], detail=False, url_name='login')
-	def login(self, request):
-		"""
-		Allows user to log in
-
-		"""
-		username = request.data.get('username')
-		password = request.data.get('password')
-		user = authenticate(username=username, password=password)
-		print("User authenticated")
-
-		if user is not None:
-			print("User exists")
-			if user.is_active:
-				print("User is active")
-				token = create_auth_token()
-				return Response({'token': token}, status=200)
-			else:
-				return Response({'message': 'Account not activated'}, status=400)
-		else:
-			return Response({'message': 'Password or Username incorrect'}, status=401)
-
-	queryset = User.objects.all()
-	serializer_class = None
