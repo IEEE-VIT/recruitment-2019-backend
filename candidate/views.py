@@ -1,5 +1,7 @@
 import django_filters
 from django.db.models import Q
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
@@ -11,18 +13,32 @@ from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer
 
 
+@method_decorator(name='create', decorator=swagger_auto_schema(
+    operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form"
+))
+@method_decorator(name='partial_update', decorator=swagger_auto_schema(
+    operation_description="This Endpoint Is To Be Used By The Interviewer To Add Comments and Ratings"
+))
+@method_decorator(name='update', decorator=swagger_auto_schema(
+    operation_description="This Endpoint Is To Be Used By The Interviewer To Add Comments and Ratings"
+))
+@method_decorator(name='snooze', decorator=swagger_auto_schema(
+    operation_description="This Endpoint Is To Be Used To Snooze A Called Candidate. To Be Used By The Moderator"
+))
+@method_decorator(name='invalidate', decorator=swagger_auto_schema(
+    operation_description="After Snoozing Multiple Times, The Candidate May Be Made Inactive. This Endpoint Allows The Moderators To Do That"
+))
 class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
     throttle_classes = [AnonRateThrottle]
     serializer_class = CandidateSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['room_number', 'interests']
 
     def get_queryset(self):
         candidate_interests = self.request.query_params.get('interest', None)
         if self.request.action == 'list':
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(interests__contains=candidate_interests).order_by(
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
+                interests__contains=candidate_interests).order_by(
                 'timestamp')
         else:
             return Candidate.objects.all()
@@ -53,6 +69,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             candidate.save()
             return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
 
+    @action(methods=['POST'], detail=True)
     def invalidate(self, request, **kwargs):
         candidate = Candidate.objects.get(id=kwargs['applicant_id'])
         candidate.is_active = False
@@ -61,6 +78,9 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         return Response({'detail': f"The candidate {candidate.reg_no} has been invalidated"}, status=200)
 
 
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="Return A List Of Candidates Filtered According To Parameters Passed"
+))
 class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
         'timestamp')
