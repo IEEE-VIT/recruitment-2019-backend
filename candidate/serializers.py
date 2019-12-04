@@ -71,5 +71,5 @@ class ProjectAssignSerializer(serializers.Serializer):
     modification_body = serializers.CharField(allow_blank=True, max_length=10000)
 
 
-class AcceptSerializer(serializers.Serializer):
+class AcceptRejectSerializer(serializers.Serializer):
     round = serializers.IntegerField(required=True)
