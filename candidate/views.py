@@ -14,13 +14,13 @@ from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer
 
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
-    operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form"
+    operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form. Many of these fields are read only, but do not appear so in the description below."
 ))
 @method_decorator(name='partial_update', decorator=swagger_auto_schema(
-    operation_description="This Endpoint Is To Be Used By The Interviewer To Add Comments and Ratings"
+    operation_description="This Endpoint Is To Be Used By The Interviewer To Add Comments and Ratings. Many of these fields are read only, but do not appear so in the description below."
 ))
 @method_decorator(name='update', decorator=swagger_auto_schema(
-    operation_description="This Endpoint Is To Be Used By The Interviewer To Add Comments and Ratings"
+    operation_description="This Endpoint Is To Be Used By The Interviewer To Add Comments and Ratings. Many of these fields are read only, but do not appear so in the description below."
 ))
 @method_decorator(name='snooze', decorator=swagger_auto_schema(
     operation_description="This Endpoint Is To Be Used To Snooze A Called Candidate. To Be Used By The Moderator"
