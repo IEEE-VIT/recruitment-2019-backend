@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 	'candidate.apps.CandidateConfig',
 	'recruiter.apps.RecruiterConfig',
 	'drf_yasg',
+	'questions.apps.QuestionsConfig'
 ]
 
 SITE_ID = 1
@@ -157,7 +158,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

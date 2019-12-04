@@ -13,7 +13,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers')
-    recaptcha = ReCaptchaField(write_only=True)
+    #recaptcha = ReCaptchaField(write_only=True)
 
     class Meta:
         model = Candidate
@@ -53,10 +53,10 @@ class CandidateSerializer(WritableNestedModelSerializer):
 
         return fields
 
-    def create(self, validated_data):
-        validated_data.pop('recaptcha')
-        super(CandidateSerializer, self).create(validated_data=validated_data)
-
+    # def create(self, validated_data):
+    #     validated_data.pop('recaptcha')
+    #     super(CandidateSerializer, self).create(validated_data=validated_data)
+    #
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
     class Meta:
