@@ -38,15 +38,6 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
 
-    def get_queryset(self):
-        candidate_interests = self.request.query_params.get('interest', None)
-        if self.request.action == 'list':
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
-                interests__contains=candidate_interests).order_by(
-                'timestamp')
-        else:
-            return Candidate.objects.all()
-
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [AllowAny]
@@ -105,9 +96,17 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
         'timestamp')
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['room_number', 'interests']
     serializer_class = CandidateSerializer
+    throttle_classes = [AnonRateThrottle]
+
+    def get_queryset(self):
+        candidate_interest = self.request.query_params.get('interest', None)
+        print(type(candidate_interest))
+        if self.request.method == 'GET' and candidate_interest is not None:
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(interests__contains=candidate_interest).order_by(
+                'timestamp')
+        else:
+            return Candidate.objects.all()
 
 
 
