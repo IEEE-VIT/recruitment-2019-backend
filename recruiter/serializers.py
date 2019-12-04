@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from recruiter.models import Recruiter, User
 
+
 class RecruiterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Recruiter
@@ -16,7 +17,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 		model = User
 
 		fields = '__all__'
-
 
 	def update(self, instance, validated_data):
 		recruiter_data = validated_data.pop('recruiter')

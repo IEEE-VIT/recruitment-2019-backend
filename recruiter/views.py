@@ -1,17 +1,17 @@
 from django.contrib.auth import authenticate
-from django.contrib.sites import requests
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.decorators import action
 from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin, CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet, ViewSet
 
 from recruiter.models import User, create_auth_token
 from recruiter.serializers import UserSerializer
 
 
-class RecruiterViewSet(viewsets.GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
+class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
 
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
@@ -24,12 +24,12 @@ class RecruiterViewSet(viewsets.GenericViewSet, UpdateModelMixin, RetrieveModelM
 		return [permission() for permission in permission_classes]
 
 
-class AuthViewSet():
+class AuthViewSet(ViewSet):
 
-	@action(methods=['post'], detail=False, url_name='Register')
+	@action(methods=['post'], detail=False, url_name='registration')
+	@csrf_exempt
 	def register(self, request):
 		# Check for username exists
-
 		username = request.data.get('username')
 		email = request.data.get('email')
 		password = request.data.get('password')
@@ -47,10 +47,9 @@ class AuthViewSet():
 		user.last_name = last_name
 		user.is_active = False
 		user.save()
-		Response.status_code = 201
-		return Response()
+		return Response(status=201)
 
-	@action(methods=['post'], detail=False)
+	@action(methods=['post'], detail=False, url_name='login')
 	def login(self, request):
 		"""
 		Allows user to log in
@@ -66,16 +65,11 @@ class AuthViewSet():
 			if user.is_active:
 				print("User is active")
 				token = create_auth_token()
-				Response.status_code = 200
-				return Response({'token': token})
+				return Response({'token': token}, status=200)
 			else:
-				Response.status_code = 400
-				return Response({'message': 'Account not activated'})
+				return Response({'message': 'Account not activated'}, status=400)
 		else:
-			Response.status_code = 401
-			return Response({'message': 'Password or Username incorrect'})
-	permission_classes = [IsAuthenticated]
-	serializer_class = UserSerializer
+			return Response({'message': 'Password or Username incorrect'}, status=401)
 
-
-
+	queryset = User.objects.all()
+	serializer_class = None

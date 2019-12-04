@@ -48,7 +48,11 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
                 return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
             except Exception as e:
                 print(f"Couldn't send email to candidate. Error: {e}")
+                candidate.times_snoozed += 1
+                candidate.save()
                 return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
+            except:
+                print('Couldn\'t send email to candidate')
 
 
 class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
@@ -57,3 +61,4 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['room_number', 'interests']
     serializer_class = CandidateSerializer
+
