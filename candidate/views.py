@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
 from candidate.models import Candidate, ProjectTemplate
-from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer
+from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
+    AcceptSerializer
 
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
@@ -27,6 +28,9 @@ from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer
 ))
 @method_decorator(name='invalidate', decorator=swagger_auto_schema(
     operation_description="After Snoozing Multiple Times, The Candidate May Be Made Inactive. This Endpoint Allows The Moderators To Do That"
+))
+@method_decorator(name='accept', decorator=swagger_auto_schema(
+    operation_description="This Endpoint Accepts The Candidate To The Next Round.",
 ))
 class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
     throttle_classes = [AnonRateThrottle]
@@ -55,7 +59,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     @action(methods=['POST'], detail=True)
     def snooze(self, request, *args, **kwargs):
         try:
-            candidate = Candidate.objects.get(id=kwargs['candidate_id'])
+            candidate = self.get_object()
         except Candidate.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -71,11 +75,28 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 
     @action(methods=['POST'], detail=True)
     def invalidate(self, request, **kwargs):
-        candidate = Candidate.objects.get(id=kwargs['applicant_id'])
+        candidate = self.get_object()
         candidate.is_active = False
         # ToDo: Send Email to Candidate
         candidate.save()
         return Response({'detail': f"The candidate {candidate.reg_no} has been invalidated"}, status=200)
+
+    @action(methods=['POST'], detail=True, serializer_class=AcceptSerializer)
+    def accept(self, request, **kwargs):
+        candidate = self.get_object()
+        round = request.data.get('round')
+        if round == 1:
+            candidate.round_1_call = True
+            candidate.save()
+            return Response({'detail': "Round 1 Passed"}, status=200)
+        elif round == 2:
+            candidate.round_2_call = True
+            candidate.save()
+            return Response({'detail': "Round 2 Passed"}, status=200)
+        else:
+            return Response({'detail': "Invalid Form Data"}, status=400)
+
+
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
