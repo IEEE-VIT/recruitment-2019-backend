@@ -89,6 +89,14 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     serializer_class = CandidateSerializer
 
 
+
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="Return A List Of All The Project Templates"
+))
+
+@method_decorator(name='assign', decorator=swagger_auto_schema(
+    operation_description="Endpoint To Assign Projects To Candidates and Also Any Modifications That May Be Mentioned."
+))
 class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = ProjectTemplate.objects.all()
     serializer_class = ProjectTemplateSerializer
