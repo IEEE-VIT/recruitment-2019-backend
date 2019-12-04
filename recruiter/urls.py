@@ -3,17 +3,12 @@ from django.urls import path
 
 from rest_framework import routers
 
-from recruiter.views import RecruiterViewSet
-from rest_auth.views import LoginView, LogoutView
-from rest_auth.registration.views import RegisterView
+from recruiter.views import RecruiterViewSet, AuthViewSet
 
 router = routers.DefaultRouter()
-router.register(r'users', RecruiterViewSet)
-
+router.register(r'users', RecruiterViewSet,)
+router.register(r'auth', AuthViewSet)
 
 urlpatterns = [
-	path('', include(router.urls)),
-	path('auth/login/', LoginView.as_view()),
-	path('auth/logout/', LogoutView.as_view()),
-	path('auth/registration/', RegisterView.as_view())
+	path('', include(router.urls))
 ]

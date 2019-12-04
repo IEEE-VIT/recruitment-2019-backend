@@ -44,7 +44,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
                     from_email='jaiswalsanskar078@gmail.com',
                     recipient_list=[candidate.email]
                 )
-                candidate.email_sent = True
+                candidate.times_snoozed = candidate.times_snoozed+1
             except:
                 print('Couldn\'t send email to candidate')
 

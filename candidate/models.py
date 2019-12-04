@@ -19,16 +19,14 @@ class Candidate(models.Model):
 
 
     round_1_comment = models.TextField(blank=True)
-    round_1_call = models.BooleanField(default=None)
+    round_1_call = models.BooleanField(default=None, null=True)
 
     # round_2_project_template = models.ForeignKey() ToDo: Add This Foreign Key
     round_2_project_modification = models.TextField(default=None)
     round_2_comment = models.TextField(default=None)
     round_2_project_completion = models.IntegerField(default=0)
     round_2_project_understanding = models.IntegerField(default=0)
-    round_2_call = models.BooleanField(default=None)
-
-
+    round_2_call = models.BooleanField(default=False, null=True)
 
     def get_absolute_url(self):
         return reverse('candidate:candidate_detail', args=[self.reg_no])
