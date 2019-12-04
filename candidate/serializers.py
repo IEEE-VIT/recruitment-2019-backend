@@ -1,7 +1,7 @@
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
 
-from candidate.models import Answer, Candidate
+from candidate.models import Answer, Candidate, ProjectTemplate
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -41,10 +41,23 @@ class CandidateSerializer(WritableNestedModelSerializer):
             fields['called'].read_only = True
             fields['round_1_comment'].read_only = True
             fields['round_1_call'].read_only = True
-            # fields['round_2_project_template'].read_only = True ToDo: Enable This
+            fields['round_2_project_template'].read_only = True
             fields['round_2_project_modification'].read_only = True
             fields['round_2_comment'].read_only = True
             fields['round_2_project_understanding'].read_only = True
             fields['round_2_call'].read_only = True
 
         return fields
+
+
+class ProjectTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectTemplate
+        fields = '__all__'
+        read_only_fields = '__all__'
+
+
+class ProjectAssignSerializer(serializers.Serializer):
+    applicant_id = serializers.IntegerField(required=True)
+    project_template_id = serializers.CharField(max_length=10, required=True)
+    modification_body = serializers.CharField(allow_blank=True, max_length=10000)

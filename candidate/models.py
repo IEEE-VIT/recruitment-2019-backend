@@ -3,8 +3,14 @@ from django.urls import reverse
 from django.utils import timezone
 
 
-class Candidate(models.Model):
+class ProjectTemplate(models.Model):
+    template_id = models.CharField(max_length=4, primary_key=True)
+    domain = models.CharField(max_length=20)
+    title = models.TextField()
+    body = models.TextField()
 
+
+class Candidate(models.Model):
     name = models.CharField(max_length=100)
     contact = models.BigIntegerField()
     reg_no = models.CharField(max_length=9)
@@ -17,12 +23,11 @@ class Candidate(models.Model):
     timestamp = models.DateTimeField(default=timezone.now, editable=False)
     room_number = models.IntegerField()
 
-
     round_1_comment = models.TextField(blank=True)
     round_1_call = models.BooleanField(default=None, null=True)
 
-    # round_2_project_template = models.ForeignKey() ToDo: Add This Foreign Key
-    round_2_project_modification = models.TextField(default=None)
+    round_2_project_template = models.ForeignKey(ProjectTemplate, on_delete=models.PROTECT)
+    round_2_project_modification = models.TextField(default=None, blank=True, null=True)
     round_2_comment = models.TextField(default=None)
     round_2_project_completion = models.IntegerField(default=0)
     round_2_project_understanding = models.IntegerField(default=0)
@@ -44,10 +49,3 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"{self.candidate_id} - {self.answer}"
-
-
-class ProjectTemplate(models.Model):
-    template_id = models.CharField(max_length=4, primary_key=True)
-    domain = models.CharField(max_length=20)
-    title = models.TextField()
-    body = models.TextField()

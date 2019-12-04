@@ -5,7 +5,7 @@ from rest_framework import routers
 
 from recruiter.views import RecruiterViewSet, AuthViewSet
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users', RecruiterViewSet,)
 router.register(r'auth', AuthViewSet)
 
