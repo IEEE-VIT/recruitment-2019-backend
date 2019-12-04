@@ -1,5 +1,6 @@
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
+from rest_framework_recaptcha.fields import ReCaptchaField
 
 from candidate.models import Answer, Candidate, ProjectTemplate
 
@@ -12,6 +13,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers')
+    recaptcha = ReCaptchaField(write_only=True)
 
     class Meta:
         model = Candidate
@@ -28,14 +30,16 @@ class CandidateSerializer(WritableNestedModelSerializer):
             fields['email'].read_only = True
             fields['hostel'].read_only = True
             fields['interests'].read_only = True
-            fields['tech_interests'].read_only = True
             fields['answers'].read_only = True
             fields['timestamp'].read_only = True
             fields['called'].read_only = True
             fields['room_number'].read_only = True
             fields['times_snoozed'].read_only = True
+            fields['is_active'].read_only = True
 
-        if request and getattr(request, 'method', None) == 'POST':
+        if request and getattr(request, 'method', None) == 'POST':  # Candidate Fills This
+            fields['id'].read_only = True
+            fields['timestamp'].read_only = True
             fields['is_active'].read_only = True
             fields['times_snoozed'].read_only = True
             fields['called'].read_only = True
@@ -48,6 +52,10 @@ class CandidateSerializer(WritableNestedModelSerializer):
             fields['round_2_call'].read_only = True
 
         return fields
+
+    def create(self, validated_data):
+        validated_data.pop('recaptcha')
+        super(CandidateSerializer, self).create(validated_data=validated_data)
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):

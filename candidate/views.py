@@ -50,7 +50,6 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             candidate.save()
             return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
 
-
     def invalidate(self, request, **kwargs):
         candidate = Candidate.objects.get(id=kwargs['applicant_id'])
         candidate.is_active = False
