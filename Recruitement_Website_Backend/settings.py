@@ -81,8 +81,8 @@ REST_FRAMEWORK = {
 
 	'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
 
-	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-	'PAGE_SIZE': 20
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+	'PAGE_SIZE': 2
 }
 
 AUTH_USER_MODEL = 'recruiter.User'
@@ -180,6 +180,6 @@ if 'DATABASE_URL' in os.environ:
 	DATABASES = {'default': dj_database_url.config()}
 
 
-DRF_RECAPTCHA_SECRET_KEY = os.environ.get("GR_CAPTCHA_SECRET_KEY")
+DRF_RECAPTCHA_SECRET_KEY = '6LcRH8YUAAAAAGa4c2EDgU0iN623TZEG--Ldo-Am'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
