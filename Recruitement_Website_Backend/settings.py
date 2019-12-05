@@ -185,8 +185,8 @@ DRF_RECAPTCHA_SECRET_KEY = '6LeMxMUUAAAAAP7hbBb7YwBThgUy1MnTOXIUQvmU'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-sentry_sdk.init(
-    # Yet to enter DSN
-    dsn="https://<key>@sentry.io/<project>",
-    integrations=[DjangoIntegration()]
-)
+# sentry_sdk.init(
+#     # Yet to enter DSN
+#     dsn="https://<key>@sentry.io/<project>",
+#     integrations=[DjangoIntegration()]
+# )
