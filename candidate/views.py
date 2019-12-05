@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -43,6 +44,10 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
     queryset = Candidate.objects.all()
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(CandidateViewSet, self).dispatch(*args, **kwargs)
 
     def get_permissions(self):
         if self.action == 'create':
