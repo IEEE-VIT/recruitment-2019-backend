@@ -14,9 +14,6 @@ from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
     AcceptRejectSerializer, CandidateInterviewerSerializer
 
-subject = 'IEEE-VIT Recruitments 2019 Round 1'
-message = f'Hi! Please report'
-
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
     operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form. Many of these fields are read only, but do not appear so in the description below."
@@ -71,7 +68,6 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         else:
             return None
 
-
     # def create(self, request, *args, **kwargs):
     #     print(request.data)
     #     super().create(request)
@@ -83,10 +79,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         except Candidate.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+        subject = "IEEE - VIT | Recruitment Notification"
+        body = "Dear Applicant,<br>We attempted to call you for your interview but were unable to reach you. Please report to the room that you filled your form in and talk to the moderator<br><br>Warm Regards,<br>Team IEEE - VIT"
+
         try:
-            send_email_to_candidate(self, candidate_email='ith.ieeevit@gmail.com',
-                                    subject=subject, body=message,
-                                    sender_email='jaiswalsanskar078@gmail.com')
+            send_email_to_candidate(candidate_email=candidate.email,
+                                    subject=subject, mail_body=body)
             candidate.times_snoozed += 1
             candidate.save()
             return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
@@ -99,8 +97,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     def invalidate(self, request, **kwargs):
         candidate = self.get_object()
         candidate.is_active = False
-        send_email_to_candidate(candidate_email='sanskar.jaiswal2018@vitstudent.ac.in', subject=subject,
-                                message=message, sender_email='jaiswalsanskar078@gmail.com')
+
+        subject = "IEEE - VIT | Recruitment Notification"
+        body = "Dear Applicant,<br>We attempted to call you for your interview but were unable to reach you. We also sent you notification, but you were not available which is why we had to invalidate your entry. Please report to any of the moderators in case you are still interested. <br><br>Warm Regards,<br>Team IEEE - VIT"
+
+        send_email_to_candidate(candidate_email=candidate.email, subject=subject,
+                                mail_body=body)
         candidate.save()
         return Response({'detail': f"The candidate {candidate.reg_no} has been invalidated"}, status=200)
 
@@ -144,10 +146,10 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         interviewer = request.user.recruiter
 
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
-        mail_body = f"Dear Applicant,\nWe thank you for your patience. You have been called for your interview. Please " \
-               f"inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
-               f"interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.\n\nWarm " \
-               f"Regards,\nTeam IEEE - VIT. "
+        mail_body = f"Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
+                    f"inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+                    f"interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.<br><br>Warm " \
+                    f"Regards,<br>Team IEEE - VIT. "
         mail_to = candidate.email
 
         send_email_to_candidate(mail_to, mail_subject, mail_body)
@@ -156,14 +158,15 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     @action(methods=['POST'], detail=False)
     def test_call(self, request):
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
-        mail_body = "Dear Applicant,\nWe thank you for your patience. You have been called for your interview. Please " \
-               "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
-               "interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.\n\nWarm " \
-               "Regards,\nTeam IEEE - VIT. "
+        mail_body = "Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
+                    "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+                    "interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.<br><br>Warm " \
+                    "Regards,<br>Team IEEE - VIT. "
         mail_to = "jaiswalsanskar078@gmail.com"
 
         resp = send_email_to_candidate(mail_to, mail_subject, mail_body)
         return resp
+
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_description="Return A List Of Candidates Filtered According To Parameters Passed"
@@ -206,12 +209,13 @@ class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
         serializer = ProjectAssignSerializer(data=request.data)
         if serializer.is_valid():
             candidate = Candidate.objects.get(id=serializer.data['applicant_id'])
-            send_email_to_candidate(candidate_email='sanskar.jaiswal2018@vitstudent.ac.in', subject=subject,
-                                    message=message, sender_email='jaiswalsanskar078@gmail.com')
             candidate.round_2_project_template = ProjectTemplate.objects.get(
                 template_id=serializer.data['project_template_id'])
             candidate.round_2_project_modification = serializer.data['modification_body']
             candidate.save()
+            subject = "IEEE - VIT | Round 2 Project"
+            body = f"Dear Applicant,<br>Congratulations on clearing the first round of interviews. You have been assigned the following project:<br><code>{candidate.round_2_project_template.body}<br>A few more instructions:<br>{candidate.round_2_project_modification}</code><br>Do your very best!<br>Warm Regards,<br>Team IEEE - VIT"
+            send_email_to_candidate(candidate_email=candidate.email, subject=subject, mail_body=body)
             return Response({'detail': "The email has been sent to the candidate"}, status=201)
         else:
             return Response({'detail': "Invalid data received"}, status=400)
