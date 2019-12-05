@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import django_heroku
-
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -183,3 +184,9 @@ if 'DATABASE_URL' in os.environ:
 DRF_RECAPTCHA_SECRET_KEY = '6LeMxMUUAAAAAP7hbBb7YwBThgUy1MnTOXIUQvmU'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+sentry_sdk.init(
+    # Yet to enter DSN
+    dsn="https://<key>@sentry.io/<project>",
+    integrations=[DjangoIntegration()]
+)
