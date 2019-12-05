@@ -11,7 +11,7 @@ from rest_framework.throttling import AnonRateThrottle
 from Recruitement_Website_Backend.functions import send_email_to_candidate
 from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
-    AcceptRejectSerializer
+    AcceptRejectSerializer, InterviewerSerializer
 
 subject = 'IEEE-VIT Recruitments 2019 Round 1'
 message = f'Hi! Please report'
@@ -39,7 +39,6 @@ message = f'Hi! Please report'
 ))
 class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin):
     throttle_classes = [AnonRateThrottle]
-    serializer_class = CandidateSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
 
@@ -51,6 +50,16 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
+
+    def get_serializer_class(self):
+        if self.action == 'create' or self.action == 'retrieve':
+            return CandidateSerializer
+        else:
+            return InterviewerSerializer
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        super().create(request)
 
     @action(methods=['POST'], detail=True)
     def snooze(self, request, *args, **kwargs):
