@@ -144,12 +144,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     def call(self, request):
         candidate = self.get_object()
         candidate.called = True
-        interviewer = request.user.recruiter
+        interviewer = request.user
 
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
         mail_body = f"Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
                     f"inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
-                    f"interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.<br><br>Warm " \
+                    f"interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
                     f"Regards,<br>Team IEEE - VIT. "
         mail_to = candidate.email
 
@@ -161,7 +161,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
         mail_body = "Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
                     "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
-                    "interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.<br><br>Warm " \
+                    "interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
                     "Regards,<br>Team IEEE - VIT. "
         mail_to = "jaiswalsanskar078@gmail.com"
 

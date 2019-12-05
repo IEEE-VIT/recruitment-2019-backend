@@ -1,25 +1,17 @@
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
-from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ViewSet
+from rest_framework.viewsets import GenericViewSet
 
-from recruiter.models import User, Recruiter
-from recruiter.serializers import UserSerializer, RegisterSerializer
-
-
-class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+from recruiter.models import User
+from recruiter.serializers import RegisterSerializer
 
 
 class AuthViewSet(GenericViewSet):
     permission_classes = [AllowAny]
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-
 
     @action(methods=['post'], detail=False, url_name='register')
     @csrf_exempt
@@ -35,7 +27,7 @@ class AuthViewSet(GenericViewSet):
         else:
             return Response({'detail': "Invalid Form Data"}, status=400)
 
-        if username in User.objects.all().values_list('username'):
+        if username in User.objects.all().values_list('username') or email in User.objects.all().values_list('email'):
             return Response({'detail': "User with that username already exists"}, status=400)
 
         user = User()
@@ -46,5 +38,4 @@ class AuthViewSet(GenericViewSet):
         user.last_name = last_name
         user.is_active = False
         user.save()
-        Recruiter.objects.create(user=user)
         return Response({'detail': "Registered Successfully, please contact Admin for Approval"}, status=201)
