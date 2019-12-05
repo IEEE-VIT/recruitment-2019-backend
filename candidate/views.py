@@ -8,10 +8,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
+from Recruitement_Website_Backend.functions import send_email_to_candidate
 from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
     AcceptRejectSerializer
 
+subject = 'IEEE-VIT Recruitments 2019 Round 1'
+message = f'Hi! Please report'
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
     operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form. Many of these fields are read only, but do not appear so in the description below."
@@ -57,7 +60,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         try:
-            # ToDo: Send Email to Candidate
+            send_email_to_candidate(candidate_email='sanskar.jaiswal2018@vitstudent.ac.in', subject=subject, message=message, sender_email='jaiswalsanskar078@gmail.com')
             candidate.email_sent = True
             return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
         except Exception as e:
@@ -70,7 +73,8 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     def invalidate(self, request, **kwargs):
         candidate = self.get_object()
         candidate.is_active = False
-        # ToDo: Send Email to Candidate
+        send_email_to_candidate(candidate_email='sanskar.jaiswal2018@vitstudent.ac.in', subject=subject,
+                                message=message, sender_email='jaiswalsanskar078@gmail.com')
         candidate.save()
         return Response({'detail': f"The candidate {candidate.reg_no} has been invalidated"}, status=200)
 
