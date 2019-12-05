@@ -31,13 +31,11 @@ class AuthViewSet(ViewSet):
     def register(self, request):
         # Check for username exists
 
-
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
-
 
         if username in User.objects.all().values_list('username') or email in User.objects.all().values_list('email'):
             return Response({'detail': "User with that username/email already exists"}, status=400)
