@@ -12,9 +12,9 @@ class ProjectTemplate(models.Model):
 
 class Candidate(models.Model):
     name = models.CharField(max_length=100)
-    contact = models.BigIntegerField()
-    reg_no = models.CharField(max_length=9)
-    email = models.EmailField()
+    contact = models.BigIntegerField(unique=True)
+    reg_no = models.CharField(max_length=9, unique=True)
+    email = models.EmailField(unique=True)
     hostel = models.CharField(max_length=10)
     is_active = models.BooleanField(default=True)
     interests = models.CharField(max_length=50)
