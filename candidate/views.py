@@ -1,3 +1,4 @@
+import django_filters
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -203,6 +204,8 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
 class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = ProjectTemplate.objects.all()
     serializer_class = ProjectTemplateSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['template_id']
 
     @action(methods=['POST'], detail=False)
     def assign(self, request):
