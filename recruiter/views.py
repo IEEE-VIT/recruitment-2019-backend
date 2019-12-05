@@ -24,6 +24,7 @@ class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
 class AuthViewSet(GenericViewSet):
     permission_classes = [AllowAny]
     queryset = User.objects.all()
+    serializer_class = RegisterSerializer
 
 
     @action(methods=['post'], detail=False, url_name='register')
