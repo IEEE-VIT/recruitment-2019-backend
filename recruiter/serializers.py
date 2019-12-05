@@ -18,6 +18,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
         fields = '__all__'
 
+    def create(self, validated_data):
+        return super().create(**validated_data)
+
     def update(self, instance, validated_data):
         recruiter_data = validated_data.pop('recruiter')
         recruiter = instance.recruiter
