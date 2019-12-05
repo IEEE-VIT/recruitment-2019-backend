@@ -181,6 +181,6 @@ if 'DATABASE_URL' in os.environ:
 	DATABASES = {'default': dj_database_url.config()}
 
 
-DRF_RECAPTCHA_SECRET_KEY = '6LcRH8YUAAAAAGa4c2EDgU0iN623TZEG--Ldo-Am'
+DRF_RECAPTCHA_SECRET_KEY = '6LeMxMUUAAAAAP7hbBb7YwBThgUy1MnTOXIUQvmU'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
