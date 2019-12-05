@@ -45,13 +45,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     queryset = Candidate.objects.all()
 
     def get_permissions(self):
-        if self.action == 'create':
-            permission_classes = [AllowAny]
-        elif self.action == 'partial_update' or self.action == 'retrieve':
-            permission_classes = [IsAuthenticated]
+        if self.request.action == 'create':
+            self.permission_classes = [AllowAny]
         else:
-            permission_classes = [IsAdminUser]
-        return [permission() for permission in permission_classes]
+            self.permission_classes = [IsAuthenticated]
+
+        return super(CandidateViewSet, self).get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'retrieve':
