@@ -9,7 +9,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_interviewer = models.BooleanField(default=False, null=True)
     is_moderator = models.BooleanField(default=False, null=True)
-    room_no = models.CharField(max_length=10, null=True)
+    room_no = models.CharField(max_length=10, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']

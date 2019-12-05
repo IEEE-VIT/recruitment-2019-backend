@@ -18,6 +18,7 @@ class AuthViewSet(GenericViewSet):
     def register(self, request):
         # Check for username exists
         serializer = RegisterSerializer(data=request.data)
+        print(serializer.initial_data.get('password'))
         if serializer.is_valid():
             username = serializer.data.get('username')
             email = serializer.data.get('email')
@@ -29,6 +30,7 @@ class AuthViewSet(GenericViewSet):
 
         if username in User.objects.all().values_list('username') or email in User.objects.all().values_list('email'):
             return Response({'detail': "User with that username already exists"}, status=400)
+
 
         user = User()
         user.username = username
