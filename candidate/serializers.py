@@ -21,7 +21,7 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
 
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers')
-    recaptcha_field = ReCaptchaField(write_only=True)
+	recaptcha_field = ReCaptchaField(write_only=True)
 
     class Meta:
         model = Candidate
