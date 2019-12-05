@@ -24,7 +24,7 @@ from rest_framework import routers
 
 from candidate.views import CandidateListViewSet, CandidateViewSet, ProjectTemplateViewSet
 
-CandidateRouter = routers.DefaultRouter(trailing_slash=False)
+CandidateRouter = routers.DefaultRouter()
 
 
 CandidateRouter.register(r'candidate/list', CandidateListViewSet, "Candidate List Endpoints")
