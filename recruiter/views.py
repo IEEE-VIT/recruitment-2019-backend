@@ -41,8 +41,8 @@ class AuthViewSet(GenericViewSet):
         else:
             return Response({'detail': "Invalid Form Data"}, status=400)
 
-        if username in User.objects.all().values_list('username'):
-            return Response({'detail': "User with that username already exists"}, status=400)
+        if username in User.objects.all().values_list('username') or email in User.objects.all().values_list('email'):
+            return Response({'detail': "User with that username/email already exists"}, status=400)
 
         user = User()
         user.username = username
