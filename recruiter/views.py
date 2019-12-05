@@ -21,26 +21,22 @@ class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
         return [permission() for permission in permission_classes]
 
 
-class AuthViewSet(GenericViewSet):
+class AuthViewSet(ViewSet):
     permission_classes = [AllowAny]
     queryset = User.objects.all()
-    serializer_class = RegisterSerializer
-
 
     @action(methods=['post'], detail=False)
     @csrf_exempt
     def register(self, request):
         # Check for username exists
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            print("Serializer is valid")
-            username = serializer.data.get('username')
-            email = serializer.data.get('email')
-            password = serializer.data.get('password')
-            first_name = serializer.data.get('first_name')
-            last_name = serializer.data.get('last_name')
-        else:
-            return Response({'detail': "Invalid Form Data"}, status=400)
+
+
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+
 
         if username in User.objects.all().values_list('username') or email in User.objects.all().values_list('email'):
             return Response({'detail': "User with that username/email already exists"}, status=400)
