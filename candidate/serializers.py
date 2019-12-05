@@ -21,7 +21,7 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
 
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers')
-    recaptcha_field = ReCaptchaField(write_only=True)
+    #recaptcha_field = ReCaptchaField(write_only=True)
 
     class Meta:
         model = Candidate
@@ -32,9 +32,9 @@ class CandidateSerializer(WritableNestedModelSerializer):
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
                             'round_2_call']
 
-    def create(self, validated_data):
-        validated_data.pop('recaptcha_field')
-        super(CandidateSerializer, self).create(validated_data=validated_data)
+    # def create(self, validated_data):
+    #     validated_data.pop('recaptcha_field')
+    #     super(CandidateSerializer, self).create(validated_data=validated_data)
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
