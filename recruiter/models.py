@@ -17,6 +17,9 @@ class User(AbstractUser):
 
 class Recruiter(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recruiter')
-	is_interviewer = models.BooleanField(default=False)
-	is_moderator = models.BooleanField(default=False)
-	room_no = models.CharField(max_length=10)
+	is_interviewer = models.BooleanField(default=False, null=True)
+	is_moderator = models.BooleanField(default=False, null=True)
+	room_no = models.CharField(max_length=10, null=True)
+
+	def __str__(self):
+		return self.user.username

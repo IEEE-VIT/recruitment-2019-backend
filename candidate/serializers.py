@@ -26,7 +26,6 @@ class CandidateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Candidate
         fields = ['name', 'contact', 'reg_no', 'email', 'hostel', 'interests', 'answers', 'timestamp', 'room_number', 'recaptcha_field']
-        print(fields)
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
