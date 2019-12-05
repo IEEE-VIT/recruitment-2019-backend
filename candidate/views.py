@@ -45,7 +45,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     queryset = Candidate.objects.all()
 
     def get_permissions(self):
-        if self.request.action == 'create':
+        if self.action == 'create':
             self.permission_classes = [AllowAny]
         else:
             self.permission_classes = [IsAuthenticated]
