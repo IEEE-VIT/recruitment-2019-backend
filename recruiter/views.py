@@ -27,12 +27,13 @@ class AuthViewSet(GenericViewSet):
     serializer_class = RegisterSerializer
 
 
-    @action(methods=['post'], detail=False, url_name='register')
+    @action(methods=['post'], detail=False)
     @csrf_exempt
     def register(self, request):
         # Check for username exists
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
+            print("Serializer is valid")
             username = serializer.data.get('username')
             email = serializer.data.get('email')
             password = serializer.data.get('password')
