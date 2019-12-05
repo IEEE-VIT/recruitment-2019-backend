@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ViewSet
 
 from recruiter.models import User
-from recruiter.serializers import UserSerializer
+from recruiter.serializers import UserSerializer, RegisterSerializer
 
 
 class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
@@ -21,19 +21,24 @@ class RecruiterViewSet(GenericViewSet, UpdateModelMixin, RetrieveModelMixin):
         return [permission() for permission in permission_classes]
 
 
-class AuthViewSet(ViewSet):
+class AuthViewSet(GenericViewSet):
     permission_classes = [AllowAny]
     queryset = User.objects.all()
+
 
     @action(methods=['post'], detail=False, url_name='register')
     @csrf_exempt
     def register(self, request):
         # Check for username exists
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
-        first_name = request.data.get('first_name')
-        last_name = request.data.get('last_name')
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.data.get('username')
+            email = serializer.data.get('email')
+            password = serializer.data.get('password')
+            first_name = serializer.data.get('first_name')
+            last_name = serializer.data.get('last_name')
+        else:
+            return Response({'detail': "Invalid Form Data"}, status=400)
 
         if username in User.objects.all().values_list('username'):
             return Response({'detail': "User with that username already exists"}, status=400)
