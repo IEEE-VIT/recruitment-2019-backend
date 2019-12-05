@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
@@ -52,6 +52,8 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     def get_permissions(self):
         if self.action == 'create':
             self.permission_classes = [AllowAny]
+        elif self.action == 'test_call':
+            self.permission_classes = [AllowAny]
         else:
             self.permission_classes = [IsAuthenticated]
 
@@ -60,8 +62,15 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'retrieve':
             return CandidateSerializer
-        else:
+        elif self.action == 'update' or self.action == 'partial_update':
             return CandidateInterviewerSerializer
+        elif self.action == 'snooze' or self.action == 'invalidate':
+            return None
+        elif self.action == 'accept' or self.action == 'reject':
+            return AcceptRejectSerializer
+        else:
+            return None
+
 
     # def create(self, request, *args, **kwargs):
     #     print(request.data)
@@ -78,12 +87,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             send_email_to_candidate(self, candidate_email='ith.ieeevit@gmail.com',
                                     subject=subject, body=message,
                                     sender_email='jaiswalsanskar078@gmail.com')
-            candidate.email_sent = True
+            candidate.times_snoozed += 1
+            candidate.save()
             return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
         except Exception as e:
             print(f"Couldn't send email to candidate. Error: {e}")
-            candidate.times_snoozed += 1
-            candidate.save()
+
             return Response({'detail': 'Email is Invalid. We recommend deleting the candidate'})
 
     @action(methods=['POST'], detail=True)
@@ -101,10 +110,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         round_no = request.data.get('round')
         if round_no == 1:
             candidate.round_1_call = True
+            candidate.called = False
             candidate.save()
             return Response({'detail': "Round 1 Rejected"}, status=200)
         elif round_no == 2:
             candidate.round_2_call = True
+            candidate.called = False
             candidate.save()
             return Response({'detail': "Round 2 Rejected"}, status=200)
         else:
@@ -126,6 +137,33 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         else:
             return Response({'detail': "Invalid Form Data"}, status=400)
 
+    @action(methods=['POST'], detail=True)
+    def call(self, request):
+        candidate = self.get_object()
+        candidate.called = True
+        interviewer = request.user.recruiter
+
+        mail_subject = "IEEE - VIT Recruitment Interview Alert"
+        mail_body = f"Dear Applicant,\nWe thank you for your patience. You have been called for your interview. Please " \
+               f"inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+               f"interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.\n\nWarm " \
+               f"Regards,\nTeam IEEE - VIT. "
+        mail_to = candidate.email
+
+        send_email_to_candidate(mail_to, mail_subject, mail_body)
+        candidate.save()
+
+    @action(methods=['POST'], detail=False)
+    def test_call(self, request):
+        mail_subject = "IEEE - VIT Recruitment Interview Alert"
+        mail_body = "Dear Applicant,\nWe thank you for your patience. You have been called for your interview. Please " \
+               "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+               "interview will be conducted by {interviewer.user.first_name} {interviewer.user.last_name}.\n\nWarm " \
+               "Regards,\nTeam IEEE - VIT. "
+        mail_to = "jaiswalsanskar078@gmail.com"
+
+        resp = send_email_to_candidate(mail_to, mail_subject, mail_body)
+        return resp
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_description="Return A List Of Candidates Filtered According To Parameters Passed"
@@ -146,7 +184,8 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
                 interests__contains=candidate_interest).order_by(
                 'timestamp')
         elif self.request.method == 'GET' and room_no is not None:
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(room_number=room_no).order_by(
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
+                room_number=room_no).order_by(
                 'timestamp')
         else:
             return Candidate.objects.all()
