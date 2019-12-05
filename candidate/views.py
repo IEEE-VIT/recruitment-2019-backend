@@ -11,10 +11,11 @@ from rest_framework.throttling import AnonRateThrottle
 from Recruitement_Website_Backend.functions import send_email_to_candidate
 from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
-    AcceptRejectSerializer, InterviewerSerializer
+    AcceptRejectSerializer, CandidateInterviewerSerializer
 
 subject = 'IEEE-VIT Recruitments 2019 Round 1'
 message = f'Hi! Please report'
+
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
     operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form. Many of these fields are read only, but do not appear so in the description below."
@@ -41,6 +42,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     throttle_classes = [AnonRateThrottle]
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
+    queryset = Candidate.objects.all()
 
     def get_permissions(self):
         if self.action == 'create':
@@ -55,11 +57,11 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         if self.action == 'create' or self.action == 'retrieve':
             return CandidateSerializer
         else:
-            return InterviewerSerializer
+            return CandidateInterviewerSerializer
 
-    def create(self, request, *args, **kwargs):
-        print(request.data)
-        super().create(request)
+    # def create(self, request, *args, **kwargs):
+    #     print(request.data)
+    #     super().create(request)
 
     @action(methods=['POST'], detail=True)
     def snooze(self, request, *args, **kwargs):
@@ -69,7 +71,9 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         try:
-            send_email_to_candidate(candidate_email='sanskar.jaiswal2018@vitstudent.ac.in', subject=subject, message=message, sender_email='jaiswalsanskar078@gmail.com')
+            send_email_to_candidate(self, candidate_email='ith.ieeevit@gmail.com',
+                                    subject=subject, body=message,
+                                    sender_email='jaiswalsanskar078@gmail.com')
             candidate.email_sent = True
             return Response({'detail': "Snooze Mail Has Been Sent"}, status=200)
         except Exception as e:
@@ -159,11 +163,12 @@ class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
         serializer = ProjectAssignSerializer(data=request.data)
         if serializer.is_valid():
             candidate = Candidate.objects.get(id=serializer.data['applicant_id'])
+            send_email_to_candidate(candidate_email='sanskar.jaiswal2018@vitstudent.ac.in', subject=subject,
+                                    message=message, sender_email='jaiswalsanskar078@gmail.com')
             candidate.round_2_project_template = ProjectTemplate.objects.get(
                 template_id=serializer.data['project_template_id'])
             candidate.round_2_project_modification = serializer.data['modification_body']
             candidate.save()
-            # ToDo: Send Email to Candidate
             return Response({'detail': "The email has been sent to the candidate"}, status=201)
         else:
             return Response({'detail': "Invalid data received"}, status=400)

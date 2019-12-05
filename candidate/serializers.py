@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from rest_framework_recaptcha.fields import ReCaptchaField
+from drf_writable_nested import WritableNestedModelSerializer
 
+from rest_framework_recaptcha.fields import ReCaptchaField
 from candidate.models import Answer, Candidate, ProjectTemplate
 
 
@@ -10,7 +11,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         fields = ['id', 'answer']
 
 
-class InterviewerSerializer(serializers.ModelSerializer):
+class CandidateInterviewerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
         fields = ['called', 'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template',
@@ -18,28 +19,22 @@ class InterviewerSerializer(serializers.ModelSerializer):
                   'round_2_project_understanding', 'round_2_call']
 
 
-class CandidateSerializer(serializers.ModelSerializer):
-    answers_provided = AnswerSerializer(many=True)
-    # recaptcha = ReCaptchaField(write_only=True)
+class CandidateSerializer(WritableNestedModelSerializer):
+    answers = AnswerSerializer(many=True, source='candidate_answers')
+    recaptcha_field = ReCaptchaField(write_only=True)
 
     class Meta:
         model = Candidate
-        fields = '__all__'
+        fields = ['name', 'contact', 'reg_no', 'email', 'hostel', 'interests', 'answers', 'timestamp', 'room_number']
+        print(fields)
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
                             'round_2_call']
 
     def create(self, validated_data):
-        # validated_data.pop('recaptcha')
-        print("Create Method Reached")
-        answers = validated_data.pop('answers_provided')
-        print("Answers Popped")
-        candidate = Candidate.objects.create(**validated_data)
-        print("Candidate Created")
-        for answer in answers:
-            Answer.objects.create(candidate_id=candidate, **answer)
-        return candidate
+        validated_data.pop('recaptcha_field')
+        super(CandidateSerializer, self).create(validated_data=validated_data)
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
@@ -57,3 +52,4 @@ class ProjectAssignSerializer(serializers.Serializer):
 
 class AcceptRejectSerializer(serializers.Serializer):
     round = serializers.IntegerField(required=True)
+
