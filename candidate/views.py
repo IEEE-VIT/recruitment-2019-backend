@@ -1,10 +1,11 @@
 from django.db.models import Q
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
@@ -43,6 +44,10 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     lookup_field = 'id'
     lookup_url_kwarg = 'candidate_id'
     queryset = Candidate.objects.all()
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(CandidateViewSet, self).dispatch(*args, **kwargs)
 
     def get_permissions(self):
         if self.action == 'create':
@@ -141,8 +146,7 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
                 interests__contains=candidate_interest).order_by(
                 'timestamp')
         elif self.request.method == 'GET' and room_no is not None:
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
-                room_number=room_no).order_by(
+            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(room_number=room_no).order_by(
                 'timestamp')
         else:
             return Candidate.objects.all()
