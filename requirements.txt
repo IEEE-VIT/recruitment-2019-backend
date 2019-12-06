@@ -15,6 +15,7 @@ django-ipware==2.1.0
 django-rest-auth==0.9.5
 django-rest-recaptcha==1.0.2
 djangorestframework==3.10.3
+djangorestframework-expiring-authtoken==0.1.4
 djangorestframework-recaptcha==0.2.0
 drf-writable-nested==0.5.1
 drf-yasg==1.17.0
