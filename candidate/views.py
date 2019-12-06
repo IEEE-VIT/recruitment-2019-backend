@@ -164,17 +164,17 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         candidate.save()
         return Response({'detail': 'Candidate called!'}, status=200)
 
-    @action(methods=['POST'], detail=False)
-    def test_call(self, request):
-        mail_subject = "IEEE - VIT Recruitment Interview Alert"
-        mail_body = "Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
-                    "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
-                    "interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
-                    "Regards,<br>Team IEEE - VIT. "
-        mail_to = "jaiswalsanskar078@gmail.com"
-
-        resp = send_email_to_candidate(mail_to, mail_subject, mail_body)
-        return resp
+    # @action(methods=['POST'], detail=False)
+    # def test_call(self, request):
+    #     mail_subject = "IEEE - VIT Recruitment Interview Alert"
+    #     mail_body = "Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
+    #                 "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+    #                 "interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
+    #                 "Regards,<br>Team IEEE - VIT. "
+    #     mail_to = "jaiswalsanskar078@gmail.com"
+    #
+    #     resp = send_email_to_candidate(mail_to, mail_subject, mail_body)
+    #     return resp
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(

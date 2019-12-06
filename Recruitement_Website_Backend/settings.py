@@ -56,7 +56,7 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
-EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(hours=3)
+EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(hours=2)
 
 REST_FRAMEWORK = {
 	'DEFAULT_THROTTLE_CLASSES': [
