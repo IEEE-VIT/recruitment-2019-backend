@@ -56,7 +56,7 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
-EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(hours=3)
+EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(hours=2)
 
 REST_FRAMEWORK = {
 	'DEFAULT_THROTTLE_CLASSES': [
@@ -100,10 +100,9 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
+CORS_ORIGIN_REGEX_WHITELIST = [
 	"https://vast-reef-57139.herokuapp.com",
-	"http://localhost:3000",
-	"http://localhost:3001"
+	r"http://localhost$"
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

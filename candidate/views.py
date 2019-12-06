@@ -6,7 +6,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
@@ -52,12 +52,10 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         permission_classes = []
         if self.action == 'create':
             self.permission_classes = [AllowAny]
-        elif self.action == 'test_call':
-            self.permission_classes = [AllowAny]
         else:
-            self.permission_classes = [IsLoggedInUserOrAdmin]
+            self.permission_classes = [IsAuthenticated]
 
-        return [permission() for permission in permission_classes]
+        return super(CandidateViewSet, self).get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'retrieve':
@@ -83,7 +81,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         subject = "IEEE - VIT | Recruitment Notification"
-        body = "Dear Applicant,<br>We attempted to call you for your interview but were unable to reach you. Please report to the room that you filled your form in and talk to the moderator<br><br>Warm Regards,<br>Team IEEE - VIT"
+        body = f"Dear {candidate.name},<br>We attempted to call you for your interview but it seems like you didn't turn up. Please report to the room that you filled your form in and talk to the moderator<br><br>Warm Regards,<br>Team IEEE - VIT"
 
         try:
             send_email_to_candidate(candidate_email=candidate.email,
@@ -102,7 +100,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         candidate.is_active = False
 
         subject = "IEEE - VIT | Recruitment Notification"
-        body = "Dear Applicant,<br>We attempted to call you for your interview but were unable to reach you. We also sent you notification, but you were not available which is why we had to invalidate your entry. Please report to any of the moderators in case you are still interested. <br><br>Warm Regards,<br>Team IEEE - VIT"
+        body = f"Dear {candidate.name},<br>We attempted to call you for your interview but were unable to reach you. We also sent you notification, but you were not available which is why we had to invalidate your entry. Please report to any of the moderators in case you are still interested. <br><br>Warm Regards,<br>Team IEEE - VIT"
 
         send_email_to_candidate(candidate_email=candidate.email, subject=subject,
                                 mail_body=body)
@@ -117,12 +115,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             candidate.round_1_call = True
             candidate.called = False
             candidate.save()
-            return Response({'detail': "Round 1 Rejected"}, status=200)
+            return Response({'detail': "Round 1 Passed"}, status=200)
         elif round_no == 2:
             candidate.round_2_call = True
             candidate.called = False
             candidate.save()
-            return Response({'detail': "Round 2 Rejected"}, status=200)
+            return Response({'detail': "Round 2 Passed"}, status=200)
         else:
             return Response({'detail': "Invalid Form Data"}, status=400)
 
@@ -135,11 +133,11 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         if round_no == 1:
             candidate.round_1_call = False
             candidate.save()
-            return Response({'detail': "Round 1 Passed"}, status=200)
+            return Response({'detail': "Round 1 Rejected"}, status=200)
         elif round_no == 2:
             candidate.round_2_call = False
             candidate.save()
-            return Response({'detail': "Round 2 Passed"}, status=200)
+            return Response({'detail': "Round 2 Rejected"}, status=200)
         else:
             return Response({'detail': "Invalid Form Data"}, status=400)
 
@@ -151,7 +149,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         candidate.called_by = interviewer
 
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
-        mail_body = f"Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
+        mail_body = f"Dear {candidate.name},<br>We thank you for your patience. You have been called for your interview. Please " \
                     f"inform the moderator in your room and make your way to room number {interviewer.room_no}. Your " \
                     f"interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
                     f"Regards,<br>Team IEEE - VIT. "
@@ -161,17 +159,17 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         candidate.save()
         return Response({'detail': 'Candidate called!'}, status=200)
 
-    @action(methods=['POST'], detail=False)
-    def test_call(self, request):
-        mail_subject = "IEEE - VIT Recruitment Interview Alert"
-        mail_body = "Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
-                    "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
-                    "interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
-                    "Regards,<br>Team IEEE - VIT. "
-        mail_to = "jaiswalsanskar078@gmail.com"
-
-        resp = send_email_to_candidate(mail_to, mail_subject, mail_body)
-        return resp
+    # @action(methods=['POST'], detail=False)
+    # def test_call(self, request):
+    #     mail_subject = "IEEE - VIT Recruitment Interview Alert"
+    #     mail_body = "Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
+    #                 "inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+    #                 "interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
+    #                 "Regards,<br>Team IEEE - VIT. "
+    #     mail_to = "jaiswalsanskar078@gmail.com"
+    #
+    #     resp = send_email_to_candidate(mail_to, mail_subject, mail_body)
+    #     return resp
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
