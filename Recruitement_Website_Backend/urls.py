@@ -26,6 +26,9 @@ from questions.views import question
 
 from rest_framework_expiring_authtoken import views
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Recruitments 2019 API",
@@ -41,7 +44,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
 	# Browable API endpoints
-
+    path('sentry-debug/', trigger_error),
 	path('admin/', admin.site.urls),
 
 	# path('', include('candidate.urls')),
