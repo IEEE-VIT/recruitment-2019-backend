@@ -6,14 +6,15 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
 from Recruitement_Website_Backend.functions import send_email_to_candidate
 from candidate.models import Candidate, ProjectTemplate
+from candidate.permissions import IsLoggedInUserOrAdmin
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
-    AcceptRejectSerializer, CandidateInterviewerSerializer
+    AcceptRejectSerializer, CandidateInterviewerSerializer, CandidateModeratorSerializer
 
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
@@ -48,14 +49,15 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         return super(CandidateViewSet, self).dispatch(*args, **kwargs)
 
     def get_permissions(self):
+        permission_classes = []
         if self.action == 'create':
             self.permission_classes = [AllowAny]
         elif self.action == 'test_call':
             self.permission_classes = [AllowAny]
         else:
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = [IsLoggedInUserOrAdmin]
 
-        return super(CandidateViewSet, self).get_permissions()
+        return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'retrieve':
@@ -129,6 +131,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         candidate = self.get_object()
         candidate.is_active = False
         round_no = request.data.get('round')
+        print(type(round_no))
         if round_no == 1:
             candidate.round_1_call = False
             candidate.save()
@@ -141,20 +144,25 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
             return Response({'detail': "Invalid Form Data"}, status=400)
 
     @action(methods=['POST'], detail=True)
-    def call(self, request):
+    def call(self, request, **kwargs):
         candidate = self.get_object()
         candidate.called = True
         interviewer = request.user
-
+        candidate.called_by = interviewer.first_name
+        candidate.called_to_room_no = interviewer.room_no
+        print(interviewer)
+        print(candidate.called)
+        print(candidate.called_by)
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
         mail_body = f"Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
-                    f"inform the moderator in your room and make your way to room number {interviewer.room_number}. Your " \
+                    f"inform the moderator in your room and make your way to room number {interviewer.room_no}. Your " \
                     f"interview will be conducted by {interviewer.first_name} {interviewer.last_name}.<br><br>Warm " \
                     f"Regards,<br>Team IEEE - VIT. "
         mail_to = candidate.email
 
-        send_email_to_candidate(mail_to, mail_subject, mail_body)
+        #send_email_to_candidate(mail_to, mail_subject, mail_body)
         candidate.save()
+        return Response({'detail': 'Candidate called!'}, status=200)
 
     @action(methods=['POST'], detail=False)
     def test_call(self, request):
@@ -175,24 +183,29 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
         'timestamp')
-    serializer_class = CandidateSerializer
     throttle_classes = [AnonRateThrottle]
     filter_backends = []
 
     def get_queryset(self):
         candidate_interest = self.request.query_params.get('interest', None)
         room_no = self.request.query_params.get('room_no', None)
-        print(type(candidate_interest))
+        print(type(room_no))
         if self.request.method == 'GET' and candidate_interest is not None:
             return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
                 interests__contains=candidate_interest).order_by(
                 'timestamp')
         elif self.request.method == 'GET' and room_no is not None:
-            return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
+            return Candidate.objects.filter(Q(called=True) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
                 room_number=room_no).order_by(
                 'timestamp')
         else:
             return Candidate.objects.all()
+
+    def get_serializer_class(self):
+        if len(self.request.query_params.getlist('room_no')) == 1:
+            return CandidateModeratorSerializer
+        else:
+            return CandidateSerializer
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(

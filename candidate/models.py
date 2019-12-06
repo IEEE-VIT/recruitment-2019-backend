@@ -21,7 +21,7 @@ class Candidate(models.Model):
     times_snoozed = models.IntegerField(default=0)
     called = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default=timezone.now, editable=False)
-    room_number = models.IntegerField()
+    room_number = models.CharField(max_length=10)
 
     round_1_comment = models.TextField(blank=True)
     round_1_call = models.BooleanField(default=None, null=True)
@@ -32,6 +32,9 @@ class Candidate(models.Model):
     round_2_project_completion = models.IntegerField(default=0, null=True)
     round_2_project_understanding = models.IntegerField(default=0, null=True)
     round_2_call = models.BooleanField(default=False, null=True)
+
+    called_by = models.CharField(max_length=50, null=True)
+    called_to_room_no = models.CharField(max_length=10, null=True)
 
     def get_absolute_url(self):
         return reverse('candidate:candidate_detail', args=[self.reg_no])
