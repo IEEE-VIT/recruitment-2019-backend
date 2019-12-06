@@ -22,7 +22,7 @@ from drf_yasg import openapi
 from rest_framework.authtoken.views import obtain_auth_token
 
 from candidate.urls import CandidateRouter
-from questions.views import question
+from questions.views import questions, get_question
 
 from rest_framework_expiring_authtoken import views
 
@@ -51,7 +51,8 @@ urlpatterns = [
 	path('', include(CandidateRouter.urls)),
 	path('recruiter/auth/login', views.obtain_expiring_auth_token),
 	path('recruiter/', include('recruiter.urls')),
-	path('question', question),
+	path('questions', questions),
+	path('questions/<int:pk>', get_question),
 
 	re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
 	re_path(r'^docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

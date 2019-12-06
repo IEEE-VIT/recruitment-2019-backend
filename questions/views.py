@@ -14,7 +14,7 @@ from questions.serializers import QuestionSerializer
 @action(methods=['GET'], detail=False, url_path='questions', serializer_class=QuestionSerializer)
 @permission_classes(AllowAny)
 @csrf_exempt
-def question(self):
+def questions(self):
 	questions = []
 	rand_question_id = random.sample(range(1, 5), 3)
 	for i in rand_question_id:
@@ -22,3 +22,15 @@ def question(self):
 		questions.append(list(question))
 
 	return JsonResponse({'questions': questions}, status=200)
+
+@csrf_exempt
+def get_question(request, pk):
+
+	try:
+		question = Question.objects.get(pk=pk)
+	except Question.DoesNotExist:
+		return Response({'Detail': 'Question not found'}, status=404)
+
+	if request.method == 'GET':
+		serializer = QuestionSerializer(question)
+		return JsonResponse(serializer.data)
