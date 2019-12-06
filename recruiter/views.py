@@ -20,9 +20,8 @@ class AuthViewSet(GenericViewSet):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
-    @action(methods=['post'], detail=False, url_name='register')
+    @action(methods=['post'], detail=False, url_name='register', permission_classes=[AllowAny])
     @csrf_exempt
-    @permission_classes([AllowAny])
     def register(self, request):
         # Check for username exists
         serializer = RegisterSerializer(data=request.data)
@@ -48,9 +47,8 @@ class AuthViewSet(GenericViewSet):
         user.save()
         return Response({'detail': "Registered Successfully, please contact Admin for Approval"}, status=201)
 
-    @action(methods=['post'], detail=False, url_name='logout')
+    @action(methods=['post'], detail=False, url_name='logout', permission_classes=[IsLoggedInUserOrAdmin])
     @csrf_exempt
-    @permission_classes([IsLoggedInUserOrAdmin])
     def logout(self, request, **kwargs):
         print(request.user.auth_token)
         request.user.auth_token.delete()

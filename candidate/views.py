@@ -6,7 +6,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, RetrieveModelMixin
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
@@ -52,12 +52,10 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         permission_classes = []
         if self.action == 'create':
             self.permission_classes = [AllowAny]
-        elif self.action == 'test_call':
-            self.permission_classes = [AllowAny]
         else:
-            self.permission_classes = [IsLoggedInUserOrAdmin]
+            self.permission_classes = [IsAuthenticated]
 
-        return [permission() for permission in permission_classes]
+        return super(CandidateViewSet, self).get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'retrieve':
