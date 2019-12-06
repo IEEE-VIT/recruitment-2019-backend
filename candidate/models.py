@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
+from recruiter.models import User
+
 
 class ProjectTemplate(models.Model):
     template_id = models.CharField(max_length=4, primary_key=True)
@@ -33,8 +35,7 @@ class Candidate(models.Model):
     round_2_project_understanding = models.IntegerField(default=0, null=True)
     round_2_call = models.BooleanField(default=False, null=True)
 
-    called_by = models.CharField(max_length=50, null=True)
-    called_to_room_no = models.CharField(max_length=10, null=True)
+    called_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name="interviewee", null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('candidate:candidate_detail', args=[self.reg_no])

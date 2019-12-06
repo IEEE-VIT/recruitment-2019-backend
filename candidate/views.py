@@ -14,7 +14,7 @@ from Recruitement_Website_Backend.functions import send_email_to_candidate
 from candidate.models import Candidate, ProjectTemplate
 from candidate.permissions import IsLoggedInUserOrAdmin
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
-    AcceptRejectSerializer, CandidateInterviewerSerializer, CandidateModeratorSerializer
+    AcceptRejectSerializer, CandidateInterviewerSerializer
 
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
@@ -148,11 +148,8 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         candidate = self.get_object()
         candidate.called = True
         interviewer = request.user
-        candidate.called_by = interviewer.first_name
-        candidate.called_to_room_no = interviewer.room_no
-        print(interviewer)
-        print(candidate.called)
-        print(candidate.called_by)
+        candidate.called_by = interviewer
+
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
         mail_body = f"Dear Applicant,<br>We thank you for your patience. You have been called for your interview. Please " \
                     f"inform the moderator in your room and make your way to room number {interviewer.room_no}. Your " \
@@ -160,7 +157,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
                     f"Regards,<br>Team IEEE - VIT. "
         mail_to = candidate.email
 
-        #send_email_to_candidate(mail_to, mail_subject, mail_body)
+        send_email_to_candidate(mail_to, mail_subject, mail_body)
         candidate.save()
         return Response({'detail': 'Candidate called!'}, status=200)
 
@@ -184,6 +181,7 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
         'timestamp')
     throttle_classes = [AnonRateThrottle]
+    serializer_class = CandidateSerializer
     filter_backends = []
 
     def get_queryset(self):
@@ -200,12 +198,6 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
                 'timestamp')
         else:
             return Candidate.objects.all()
-
-    def get_serializer_class(self):
-        if len(self.request.query_params.getlist('room_no')) == 1:
-            return CandidateModeratorSerializer
-        else:
-            return CandidateSerializer
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
