@@ -16,12 +16,12 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
         model = Candidate
         fields = ['called', 'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template',
                   'round_2_project_modification', 'round_2_comment', 'round_2_project_completion',
-                  'round_2_project_understanding', 'round_2_call']
+                  'round_2_project_understanding', 'round_2_call', 'interviewer_switched']
 
 
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers')
-    recaptcha_field = ReCaptchaField()
+    #recaptcha_field = ReCaptchaField()
     called_to = serializers.SerializerMethodField()
 
     class Meta:
@@ -30,7 +30,7 @@ class CandidateSerializer(WritableNestedModelSerializer):
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
-                            'round_2_call', 'called_by', 'called_to_room_no']
+                            'round_2_call', 'called_by', 'called_to_room_no', 'interviewer_switched']
 
     def get_called_to(self, instance):
         if instance.called:

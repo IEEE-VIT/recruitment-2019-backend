@@ -24,6 +24,7 @@ class Candidate(models.Model):
     called = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default=timezone.now, editable=False)
     room_number = models.CharField(max_length=10)
+    interviewer_switch = models.BooleanField(default=False, null=True, blank=True)
 
     round_1_comment = models.TextField(blank=True)
     round_1_call = models.BooleanField(default=None, null=True, blank=True)

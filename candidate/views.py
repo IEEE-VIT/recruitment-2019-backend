@@ -144,10 +144,12 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     @action(methods=['POST'], detail=True)
     def call(self, request, **kwargs):
         candidate = self.get_object()
+        if candidate.called:
+            return Response({'detail': 'This candidate has already been called. Please contact admin if you want to call again'}, status=400)
         candidate.called = True
         interviewer = request.user
         candidate.called_by = interviewer
-
+        print(candidate.called)
         mail_subject = "IEEE - VIT Recruitment Interview Alert"
         mail_body = f"Dear {candidate.name},<br>We thank you for your patience. You have been called for your interview. Please " \
                     f"inform the moderator in your room and make your way to room number {interviewer.room_no}. Your " \
@@ -155,9 +157,16 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
                     f"Regards,<br>Team IEEE - VIT. "
         mail_to = candidate.email
 
-        send_email_to_candidate(mail_to, mail_subject, mail_body)
+        #send_email_to_candidate(mail_to, mail_subject, mail_body)
         candidate.save()
         return Response({'detail': 'Candidate called!'}, status=200)
+
+    @action(methods=['POST'], detail=True)
+    def send_to_another_interviewer(self, request, **kwargs):
+        candidate = self.get_object()
+        candidate.interviewer_switch = True
+        candidate.save()
+        return Response({'detail': 'Interviewer succesfully changed!'}, status=200)
 
     # @action(methods=['POST'], detail=False)
     # def test_call(self, request):
@@ -186,6 +195,7 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
         candidate_interest = self.request.query_params.get('interest', None)
         room_no = self.request.query_params.get('room_no', None)
         print(type(room_no))
+        print(room_no)
         if self.request.method == 'GET' and candidate_interest is not None:
             return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
                 interests__contains=candidate_interest).order_by(
@@ -196,6 +206,13 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
                 'timestamp')
         else:
             return Candidate.objects.all()
+
+    @action(methods=['GET'], detail=False, serializer_class=CandidateInterviewerSerializer, permission_classes = [IsAuthenticated])
+    def interviewer_switched_candidates(self, *args, **kwargs):
+        candidates = Candidate.objects.filter(interviewer_switch=True)
+        print(candidates)
+        return Response({'interviewer_switched_candidates': candidates.values()}, status=200)
+
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
