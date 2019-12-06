@@ -7,4 +7,4 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Question
-		exclude = ['type']
+		fields = '__all__'

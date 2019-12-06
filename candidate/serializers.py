@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework_recaptcha.fields import ReCaptchaField
 
 from candidate.models import Answer, Candidate, ProjectTemplate
+from questions.models import Question
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -16,7 +17,7 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
         model = Candidate
         fields = ['called', 'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template',
                   'round_2_project_modification', 'round_2_comment', 'round_2_project_completion',
-                  'round_2_project_understanding', 'round_2_call', 'interviewer_switched']
+                  'round_2_project_understanding', 'round_2_call', 'interviewer_switch']
 
 
 class CandidateSerializer(WritableNestedModelSerializer):
@@ -54,3 +55,6 @@ class ProjectAssignSerializer(serializers.Serializer):
 
 class AcceptRejectSerializer(serializers.Serializer):
     round = serializers.IntegerField(required=True)
+
+
+
