@@ -14,6 +14,7 @@ import os
 import django_heroku
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+import datetime
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -44,10 +45,7 @@ INSTALLED_APPS = [
 	'django.contrib.sites',
 	'rest_framework',
 	'rest_framework.authtoken',
-	'rest_auth',
-	'allauth',
-	'allauth.account',
-	'rest_auth.registration',
+	'rest_framework_expiring_authtoken',
 	'rest_framework_recaptcha',
 	'corsheaders',
 	'candidate.apps.CandidateConfig',
@@ -57,6 +55,8 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
+
+EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(hours=3)
 
 REST_FRAMEWORK = {
 	'DEFAULT_THROTTLE_CLASSES': [
@@ -76,7 +76,8 @@ REST_FRAMEWORK = {
 		'rest_framework.permissions.IsAuthenticated',
 	),
 	'DEFAULT_AUTHENTICATION_CLASSES': (
-		'rest_framework.authentication.TokenAuthentication',
+		#'rest_framework.authentication.TokenAuthentication',
+		'rest_framework_expiring_authtoken.authentication.ExpiringTokenAuthentication',
 		'rest_framework.authentication.SessionAuthentication',
 		'rest_framework.authentication.BasicAuthentication',
 	),
@@ -99,7 +100,11 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+	"https://vast-reef-57139.herokuapp.com",
+	"http://localhost:3000",
+	"http://localhost:3001"
+]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

@@ -24,17 +24,19 @@ from rest_framework.authtoken.views import obtain_auth_token
 from candidate.urls import CandidateRouter
 from questions.views import question
 
+from rest_framework_expiring_authtoken import views
+
 schema_view = get_schema_view(
-	openapi.Info(
-		title="Recruitments 2019 API",
-		default_version='v1',
-		description="Test description",
-		terms_of_service="https://www.google.com/policies/terms/",
-		contact=openapi.Contact(email="contact@snippets.local"),
-		license=openapi.License(name="BSD License"),
-	),
-	public=True,
-	permission_classes=(permissions.AllowAny,),
+   openapi.Info(
+      title="Recruitments 2019 API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
@@ -44,7 +46,7 @@ urlpatterns = [
 
 	# path('', include('candidate.urls')),
 	path('', include(CandidateRouter.urls)),
-	path('recruiter/auth/login', obtain_auth_token),
+	path('recruiter/auth/login', views.obtain_expiring_auth_token),
 	path('recruiter/', include('recruiter.urls')),
 	path('question', question),
 

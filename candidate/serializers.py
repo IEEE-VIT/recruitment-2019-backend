@@ -19,9 +19,16 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
                   'round_2_project_understanding', 'round_2_call']
 
 
+class CandidateModeratorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Candidate
+        fields = ['id', 'name', 'email', 'called_by', 'called_to_room_no']
+
+
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers')
-    recaptcha_field = ReCaptchaField()
+    #recaptcha_field = ReCaptchaField()
 
     class Meta:
         model = Candidate
@@ -29,11 +36,11 @@ class CandidateSerializer(WritableNestedModelSerializer):
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
-                            'round_2_call']
+                            'round_2_call', 'called_by', 'called_to_room_no']
 
-    def create(self, validated_data):
-        validated_data.pop('recaptcha_field')
-        return super(CandidateSerializer, self).create(validated_data=validated_data)
+    # def create(self, validated_data):
+    #     validated_data.pop('recaptcha_field')
+    #     return super(CandidateSerializer, self).create(validated_data=validated_data)
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
