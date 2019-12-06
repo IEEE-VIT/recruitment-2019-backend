@@ -99,11 +99,13 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 ]
+#
+# CORS_ORIGIN_WHITELIST = [
+# 	"https://vast-reef-57139.herokuapp.com",
+# 	"http://localhost"
+# ]
 
-CORS_ORIGIN_WHITELIST = [
-	"https://vast-reef-57139.herokuapp.com",
-	"http://localhost"
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
