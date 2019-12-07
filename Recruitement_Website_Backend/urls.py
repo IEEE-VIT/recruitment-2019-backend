@@ -15,47 +15,48 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from rest_framework.authtoken.views import obtain_auth_token
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+from rest_framework_expiring_authtoken import views
 
+from Recruitement_Website_Backend.functions import infinite
 from candidate.urls import CandidateRouter
 from questions.views import questions, get_question
 
-from rest_framework_expiring_authtoken import views
 
 def trigger_error(request):
     division_by_zero = 1 / 0
 
+
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Recruitments 2019 API",
-      default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Recruitments 2019 API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
-	# Browable API endpoints
+    # Browable API endpoints
     path('sentry-debug/', trigger_error),
-	path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
 
-	# path('', include('candidate.urls')),
-	path('', include(CandidateRouter.urls)),
-	path('recruiter/auth/login', views.obtain_expiring_auth_token),
-	path('recruiter/', include('recruiter.urls')),
-	path('questions', questions),
-	path('questions/<int:pk>', get_question),
+    # path('', include('candidate.urls')),
+    path('', include(CandidateRouter.urls)),
+    path('recruiter/auth/login', views.obtain_expiring_auth_token),
+    path('recruiter/', include('recruiter.urls')),
+    path('questions', questions),
+    path('questions/<int:pk>', get_question),
 
-	re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-	re_path(r'^docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-	re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(r'^docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(r'^.*$', infinite, name='infinite')
 
 ]
