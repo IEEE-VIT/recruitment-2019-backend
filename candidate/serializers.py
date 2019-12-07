@@ -22,7 +22,7 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers', required=False)
     recaptcha_field = ReCaptchaField()
-    called_to = serializers.SerializerMethodField()
+    called_to = serializers.SerializerMethodField(method_name=g)
 
     class Meta:
         model = Candidate
@@ -30,13 +30,13 @@ class CandidateSerializer(WritableNestedModelSerializer):
                   'question2_text', 'question3_text', 'room_number', 'is_active', 'times_snoozed', 'called',
                   'timestamp', 'round_1_comment', 'recaptcha_field', 'round_1_call', 'round_2_project_template',
                   'round_2_project_modification', 'round_2_comment', 'round_2_project_completion',
-                  'round_2_project_understanding', 'round_2_call', 'called_by', 'called_to_room_no',
+                  'round_2_project_understanding', 'round_2_call', 'called_by',
                   'interviewer_switched', 'called_to']
 
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
-                            'round_2_call', 'called_by', 'called_to_room_no', 'interviewer_switched', 'called_to']
+                            'round_2_call', 'called_by', 'interviewer_switched', 'called_to']
 
     def get_called_to(self, instance):
         if instance.called:
