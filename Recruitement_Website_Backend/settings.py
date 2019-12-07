@@ -10,12 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import datetime
 import os
+
 import django_heroku
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-import datetime
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'j!3+^8uj9@-16y4yh&d(c+*%o#nzqcq$r%6re5omz#qe7g=l)r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
@@ -36,22 +36,22 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-	'django.contrib.admin',
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
-	'django.contrib.sites',
-	'rest_framework',
-	'rest_framework.authtoken',
-	'rest_framework_expiring_authtoken',
-	'rest_framework_recaptcha',
-	'corsheaders',
-	'candidate.apps.CandidateConfig',
-	'recruiter.apps.RecruiterConfig',
-	'drf_yasg',
-	'questions.apps.QuestionsConfig'
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_expiring_authtoken',
+    'rest_framework_recaptcha',
+    'corsheaders',
+    'candidate.apps.CandidateConfig',
+    'recruiter.apps.RecruiterConfig',
+    'drf_yasg',
+    'questions.apps.QuestionsConfig'
 ]
 
 SITE_ID = 1
@@ -59,53 +59,58 @@ SITE_ID = 1
 EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(hours=2)
 
 REST_FRAMEWORK = {
-	'DEFAULT_THROTTLE_CLASSES': [
-		'rest_framework.throttling.AnonRateThrottle',
-		'rest_framework.throttling.UserRateThrottle',
-		'rest_framework.throttling.ScopedRateThrottle'
-	],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.ScopedRateThrottle'
+    ],
 
-	'DEFAULT_THROTTLE_RATES': {
-		'anon': '10/min',
-		'user': '10/min',
-		'candidate': '30/min',
-		'recruiter': '15/min'
-	},
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/min',
+        'user': '10/min',
+        'candidate': '30/min',
+        'recruiter': '15/min'
+    },
 
-	'DEFAULT_PERMISSION_CLASSES': (
-		'rest_framework.permissions.IsAuthenticated',
-	),
-	'DEFAULT_AUTHENTICATION_CLASSES': (
-		#'rest_framework.authentication.TokenAuthentication',
-		'rest_framework_expiring_authtoken.authentication.ExpiringTokenAuthentication',
-		'rest_framework.authentication.SessionAuthentication',
-		'rest_framework.authentication.BasicAuthentication',
-	),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_expiring_authtoken.authentication.ExpiringTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 
-	'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
 
-	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-	'PAGE_SIZE': 2
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2
 }
 
 AUTH_USER_MODEL = 'recruiter.User'
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware',
-	'django.middleware.security.SecurityMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.common.CommonMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
-#
-# CORS_ORIGIN_WHITELIST = [
-# 	"https://vast-reef-57139.herokuapp.com",
-# 	"http://localhost"
-# ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+    "https://r-external.herokuapp.com",
+    "http://r-external.herokuapp.com",
+    "http://r-internal.herokuapp.com",
+    "https://r-internal.herokuapp.com",
+    "https://recruitment.ieeevit.com",
+    "http://recruitment.ieeevit.com",
+    "http://localhost"
+]
+
+# CORS_ORIGIN_ALLOW_ALL = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -117,20 +122,20 @@ EMAIL_HOST_PASSWORD = 'Sameeran1203'
 ROOT_URLCONF = 'Recruitement_Website_Backend.urls'
 
 TEMPLATES = [
-	{
-		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [os.path.join(BASE_DIR, 'templates')]
-		,
-		'APP_DIRS': True,
-		'OPTIONS': {
-			'context_processors': [
-				'django.template.context_processors.debug',
-				'django.template.context_processors.request',
-				'django.contrib.auth.context_processors.auth',
-				'django.contrib.messages.context_processors.messages',
-			],
-		},
-	},
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        ,
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
 ]
 
 WSGI_APPLICATION = 'Recruitement_Website_Backend.wsgi.application'
@@ -139,10 +144,10 @@ WSGI_APPLICATION = 'Recruitement_Website_Backend.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-	}
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 # Password validation
@@ -150,13 +155,13 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
 
-	{
-		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-	},
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
 
-	{
-		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-	},
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 # Internationalization
@@ -182,10 +187,9 @@ STATIC_ROOT = 'static'
 django_heroku.settings(locals())
 
 if 'DATABASE_URL' in os.environ:
-	import dj_database_url
+    import dj_database_url
 
-	DATABASES = {'default': dj_database_url.config()}
-
+    DATABASES = {'default': dj_database_url.config()}
 
 DRF_RECAPTCHA_SECRET_KEY = '6LeMxMUUAAAAAP7hbBb7YwBThgUy1MnTOXIUQvmU'
 
