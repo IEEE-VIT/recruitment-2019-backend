@@ -19,7 +19,7 @@ class CandidateSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Candidate
-        fields = ['id', 'name', 'contact', 'email', 'hostel', 'reg_no', 'interests', 'answers', 'question1_text',
+        fields = ['id', 'name', 'contact', 'email', 'hostel', 'reg_no', 'interests', 'question1_text',
                   'question2_text', 'question3_text', 'room_number', 'is_active', 'times_snoozed', 'called',
                   'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template',
                   'round_2_project_modification', 'round_2_comment', 'round_2_project_completion',
