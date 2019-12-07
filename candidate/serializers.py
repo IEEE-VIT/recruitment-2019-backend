@@ -22,7 +22,7 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
 class CandidateSerializer(WritableNestedModelSerializer):
     answers = AnswerSerializer(many=True, source='candidate_answers', required=False)
     recaptcha_field = ReCaptchaField()
-    called_to = serializers.SerializerMethodField(method_name=g)
+    called_to = serializers.SerializerMethodField()
 
     class Meta:
         model = Candidate
