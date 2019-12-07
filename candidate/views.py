@@ -48,11 +48,10 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
         return super(CandidateViewSet, self).dispatch(*args, **kwargs)
 
     def get_permissions(self):
-        permission_classes = []
         if self.action == 'create':
-            self.permission_classes = [AllowAny]
+            self.permission_classes = [AllowAny, ]
         else:
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = [IsAuthenticated, ]
 
         return super(CandidateViewSet, self).get_permissions()
 

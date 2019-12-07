@@ -100,17 +100,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    "https://r-external.herokuapp.com",
-    "http://r-external.herokuapp.com",
-    "http://r-internal.herokuapp.com",
-    "https://r-internal.herokuapp.com",
-    "https://recruitment.ieeevit.com",
-    "http://recruitment.ieeevit.com",
-    "http://localhost",
-]
+# CORS_ORIGIN_WHITELIST = [
+#     "https://r-external.herokuapp.com",
+#     "http://r-external.herokuapp.com",
+#     "http://r-internal.herokuapp.com",
+#     "https://r-internal.herokuapp.com",
+#     "https://recruitment.ieeevit.com",
+#     "http://recruitment.ieeevit.com",
+#     "http://localhost",
+# ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
