@@ -47,8 +47,7 @@ class CandidateSerializer(WritableNestedModelSerializer):
     def create(self, validated_data):
         print(validated_data)
         validated_data.pop('recaptcha_field')
-        candidate = Candidate.objects.create(validated_data)
-        return candidate
+        return super().create(validated_data)
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
