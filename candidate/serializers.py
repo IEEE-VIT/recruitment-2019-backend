@@ -14,7 +14,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 class CandidateInterviewerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
-        fields = ['called', 'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template',
+        fields = ['called', 'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template', 'interests'
                   'round_2_project_modification', 'round_2_comment', 'round_2_project_completion',
                   'round_2_project_understanding', 'round_2_call', 'interviewer_switch']
 
