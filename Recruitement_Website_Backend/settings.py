@@ -104,7 +104,7 @@ CORS_ORIGIN_WHITELIST = [
     "https://r-external.herokuapp.com",
     "http://r-external.herokuapp.com",
     "http://r-internal.herokuapp.com",
-    "http://r-intternal.herokuapp.com",
+    "https://r-internal.herokuapp.com",
     "https://recruitment.ieeevit.com",
     "http://recruitment.ieeevit.com",
     "http://localhost"
