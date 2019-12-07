@@ -5,6 +5,8 @@ from candidate.models import Candidate, Answer, ProjectTemplate
 # admin.site.register(Candidate)
 admin.site.register(ProjectTemplate)
 admin.site.register(Answer)
+
+
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
     list_display = ('name', 'reg_no', 'interests', 'called')
