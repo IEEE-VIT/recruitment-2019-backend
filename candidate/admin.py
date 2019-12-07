@@ -1,10 +1,9 @@
 from django.contrib import admin
 
-from candidate.models import Candidate, Answer, ProjectTemplate
+from candidate.models import Candidate, ProjectTemplate
 
 # admin.site.register(Candidate)
 admin.site.register(ProjectTemplate)
-admin.site.register(Answer)
 
 
 @admin.register(Candidate)
