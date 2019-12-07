@@ -3,7 +3,6 @@ from rest_framework import serializers
 from rest_framework_recaptcha.fields import ReCaptchaField
 
 from candidate.models import Answer, Candidate, ProjectTemplate
-from questions.models import Question
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -27,7 +26,13 @@ class CandidateSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Candidate
-        fields = ['id', 'name', 'contact', 'email', 'hostel', 'reg_no', 'interests', 'answers', 'question1_text', 'question2_text', 'question3_text', 'room_number', 'called_to']
+        fields = ['id', 'name', 'contact', 'email', 'hostel', 'reg_no', 'interests', 'answers', 'question1_text',
+                  'question2_text', 'question3_text', 'room_number', 'is_active', 'times_snoozed',
+                  'called', 'timestamp', 'round_1_comment',
+                  'round_1_call', 'round_2_project_template', 'round_2_project_modification',
+                  'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
+                  'round_2_call', 'called_by', 'called_to_room_no', 'interviewer_switched', 'called_to']
+
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
@@ -60,6 +65,3 @@ class ProjectAssignSerializer(serializers.Serializer):
 
 class AcceptRejectSerializer(serializers.Serializer):
     round = serializers.IntegerField(required=True)
-
-
-
