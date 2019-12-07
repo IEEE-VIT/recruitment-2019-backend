@@ -25,10 +25,6 @@ class Candidate(models.Model):
     timestamp = models.DateTimeField(default=timezone.now, editable=False)
     room_number = models.CharField(max_length=10)
     interviewer_switch = models.BooleanField(default=False, null=True, blank=True)
-    
-    question1_id = models.ForeignKey('questions.Question', null=True, blank=True, on_delete=models.PROTECT, related_name='candidate_question_1')
-    question2_id = models.ForeignKey('questions.Question', null=True, blank=True, on_delete=models.PROTECT, related_name='candidate_question_2')
-    question3_id = models.ForeignKey('questions.Question', null=True, blank=True, on_delete=models.PROTECT, related_name='candidate_question_3')
 
     question1_text = models.TextField(null=True, blank=True)
     question2_text = models.TextField(null=True, blank=True)
