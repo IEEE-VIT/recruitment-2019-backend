@@ -1,0 +1,49 @@
+#runtime: python
+#
+## the PROJECT-DIRECTORY is the one with settings.py and wsgi.py
+#entrypoint: gunicorn -b :8000 Recruitement_Website_Backend.wsgi # specific to a GUnicorn HTTP server deployment
+#env: flex # for Google Cloud Flexible App Engine
+#
+## any environment variables you want to pass to your application.
+## accessible through os.environ['VARIABLE_NAME']
+#env_variables:
+## the secret key used for the Django app (from PROJECT-DIRECTORY/settings.py)
+#  SECRET_KEY: 'j!3+^8uj9@-16y4yh&d(c+*%o#nzqcq$r%6re5omz#qe7g=l)r'
+#  DEBUG: 'False' # always False for deployment
+#
+## everything after /cloudsql/ can be found by entering >> gcloud sql instances describe DATABASE-NAME << in your Terminal
+## the DATABASE-NAME is the name you gave your project's PostgreSQL database
+## the second line from the describe output called connectionName can be copied and pasted after /cloudsql/
+#  DB_HOST: '/cloudsql/recruitmentbackend2019:asia-southeast1:recruitment-backend-19'
+#  DB_PORT: '5432' # PostgreSQL port
+#  DB_NAME: 'recruitmentdb19'
+#  DB_USER: 'aryan' # either 'postgres' (default) or one you created on the PostgreSQL instance page
+#  DB_PASSWORD: 'testballs-db-1234'
+#
+#  STATIC_URL: 'https://storage.googleapis.com/recruitment-backend-19/static/' # this is the url that you sync static files to
+#
+#handlers:
+#- url: /static
+#  static_dir: static
+#
+#beta_settings:
+## from command >> gcloud sql instances describe DATABASE-NAME <<
+#  cloud_sql_instances: recruitmentbackend2019:asia-southeast1:recruitment-backend-19
+#
+#runtime_config:
+#  python_version: 3 # enter your Python version BASE ONLY here. Enter 2 for 2.7.9 or 3 for 3.6.4
+
+# [START django_app]
+runtime: python37
+handlers:
+# This configures Google App Engine to serve the files in the app's
+# static directory.
+- url: /static
+  static_dir: static/
+# This handler routes all requests not caught above to the main app.
+# It is required when static routes are defined, but can be omitted
+# (along with the entire handlers section) when there are no static
+# files defined.
+- url: /.*
+  script: auto
+# [END django_app]
