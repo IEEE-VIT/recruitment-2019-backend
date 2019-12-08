@@ -29,7 +29,11 @@ class Candidate(models.Model):
     question1_text = models.TextField(null=True, blank=True)
     question2_text = models.TextField(null=True, blank=True)
     question3_text = models.TextField(null=True, blank=True)
-    
+
+    answer1_text = models.TextField(null=True, blank=True)
+    answer2_text = models.TextField(null=True, blank=True)
+    answer3_text = models.TextField(blank=True, null=True)
+
     round_1_comment = models.TextField(blank=True)
     round_1_call = models.BooleanField(default=None, null=True, blank=True)
 
@@ -52,10 +56,4 @@ class Candidate(models.Model):
         return self.name
 
 
-class Answer(models.Model):
-    candidate_id = models.ForeignKey('Candidate', on_delete=models.CASCADE, related_name='candidate_answers')
-    answer = models.TextField()
-
-    def __str__(self):
-        return f"{self.candidate_id} - {self.answer}"
 

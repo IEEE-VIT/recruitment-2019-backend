@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'j!3+^8uj9@-16y4yh&d(c+*%o#nzqcq$r%6re5omz#qe7g=l)r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
@@ -100,6 +100,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
+
 CORS_ORIGIN_WHITELIST = [
     "https://r-external.herokuapp.com",
     "http://r-external.herokuapp.com",
@@ -110,7 +111,6 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost",
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
