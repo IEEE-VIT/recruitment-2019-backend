@@ -23,8 +23,9 @@ class InterestFilter(SimpleListFilter):
 
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'reg_no', 'interests', 'called')
+    list_display = ('name', 'reg_no', 'interests', 'called', 'timestamp')
     list_filter = (
         InterestFilter, 'called', 'round_1_call', 'room_number', 'is_active', 'times_snoozed', 'round_1_call',
         'round_2_project_template', 'round_2_call')
     search_fields = ('name', 'contact', 'reg_no', 'interests', 'grade', 'round_1_comment')
+    ordering = ('-timestamp', )
