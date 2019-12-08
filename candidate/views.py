@@ -151,7 +151,8 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 				status=400)
 		candidate.called = True
 		interviewer = request.user
-		candidate.called_by = interviewer
+		candidate.called_by = interviewer.username
+		candidate.called_to_room_no = interviewer.room_no
 		print(candidate.called)
 		mail_subject = "IEEE - VIT Recruitment Interview Alert"
 		mail_body = f"Dear {candidate.name},<br>We thank you for your patience. You have been called for your interview. Please " \

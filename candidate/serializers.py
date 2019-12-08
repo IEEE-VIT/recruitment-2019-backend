@@ -15,7 +15,6 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
 
 class CandidateSerializer(WritableNestedModelSerializer):
     recaptcha_field = ReCaptchaField()
-    called_to = serializers.SerializerMethodField()
     reg_no = serializers.RegexField(regex='^19[A-Z]{3}[0-9]{4}$')
 
     class Meta:
@@ -25,18 +24,12 @@ class CandidateSerializer(WritableNestedModelSerializer):
                   'timestamp', 'round_1_comment', 'round_1_call', 'round_2_project_template',
                   'round_2_project_modification', 'round_2_comment', 'round_2_project_completion',
                   'round_2_project_understanding', 'round_2_call', 'called_by',
-                  'interviewer_switch', 'called_to', 'recaptcha_field', 'answer1_text', 'answer2_text', 'answer3_text']
+                  'interviewer_switch', 'called_to_room_no', 'recaptcha_field', 'answer1_text', 'answer2_text', 'answer3_text']
 
         read_only_fields = ['id', 'is_active', 'times_snoozed', 'called', 'timestamp', 'round_1_comment',
                             'round_1_call', 'round_2_project_template', 'round_2_project_modification',
                             'round_2_comment', 'round_2_project_completion', 'round_2_project_understanding',
-                            'round_2_call', 'called_by', 'interviewer_switch', 'called_to']
-
-    def get_called_to(self, instance):
-        if instance.called:
-            return instance.called_by.room_no
-        else:
-            return None
+                            'round_2_call', 'called_by', 'interviewer_switch', 'called_to_room_no']
 
     def create(self, validated_data):
         print(validated_data)
