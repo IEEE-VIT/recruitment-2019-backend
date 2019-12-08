@@ -15,6 +15,12 @@ from candidate.models import Candidate, ProjectTemplate
 from candidate.serializers import CandidateSerializer, ProjectTemplateSerializer, ProjectAssignSerializer, \
     AcceptRejectSerializer, CandidateInterviewerSerializer
 
+round_number = 1
+if round_number == 1:
+    round_status = None
+else:
+    round_status = True
+
 
 @method_decorator(name='create', decorator=swagger_auto_schema(
     operation_description="Endpoint to Enable Creation Of New Candidates. To Be Used For The Round 1 Form. Many of these fields are read only, but do not appear so in the description below."
@@ -122,6 +128,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
     def reject(self, request, **kwargs):
         candidate = self.get_object()
         candidate.is_active = False
+        candidate.called = False
         round_no = request.data.get('round')
         print(type(round_no))
         if round_no == 1:
@@ -182,13 +189,14 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
         print(room_no)
         if self.request.method == 'GET' and candidate_interest is not None:  # for Interviewer
             return Candidate.objects.filter(
-                Q(called=False) & Q(is_active=True) & Q(round_1_call=None) & Q(round_2_call=None).filter(
-                    interests__contains=candidate_interest).order_by('timestamp')
-            if self.request.method == 'GET' and room_no is not None:  # for Moderator
-                return Candidate.objects.filter(
-                    Q(called=True) & Q(is_active=True) & Q(round_1_call=None) & Q(round_2_call=None)).filter(
-                    room_number__exact=room_no).order_by(
-                    'timestamp')
+                Q(called=False) & Q(is_active=True) & Q(round_1_call=round_status) & Q(round_2_call=None)).filter(
+                interests__contains=candidate_interest).order_by('timestamp')
+
+        elif self.request.method == 'GET' and room_no is not None:  # for Moderator
+            return Candidate.objects.filter(
+                Q(called=True) & Q(is_active=True) & Q(round_1_call=round_status) & Q(round_2_call=None)).filter(
+                room_number__exact=room_no).order_by(
+                'timestamp')
 
     @action(methods=['GET'], detail=False, serializer_class=CandidateInterviewerSerializer,
             permission_classes=[IsAuthenticated])
