@@ -11,6 +11,9 @@ class ProjectTemplate(models.Model):
     title = models.TextField()
     body = models.TextField()
 
+    def __str__(self):
+        return f'{self.template_id} - {self.title}'
+
 
 class Candidate(models.Model):
     name = models.CharField(max_length=100)
