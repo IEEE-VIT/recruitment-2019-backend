@@ -231,6 +231,6 @@ class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
 			subject = "IEEE - VIT | Round 2 Project"
 			body = f"Dear Applicant,<br>Congratulations on clearing the first round of interviews. You have been assigned the following project:<br><code>{candidate.round_2_project_template.body}<br>A few more instructions:<br>{candidate.round_2_project_modification}</code><br>Do your very best!<br>Warm Regards,<br>Team IEEE - VIT"
 			send_email_to_candidate(candidate_email=candidate.email, subject=subject, mail_body=body)
-			return Response({'detail': "The email has been sent to the candidate"}, status=201)
+			return Response({'detail': "The email has been sent to the candidate"}, status=200)
 		else:
 			return Response({'detail': "Invalid data received"}, status=400)
