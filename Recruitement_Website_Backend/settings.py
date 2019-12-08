@@ -64,11 +64,11 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
         'rest_framework.throttling.ScopedRateThrottle'
     ],
-
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '10/min',
-        'candidate': '250/min',
-    },
+    #
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '10/min',
+    #     'candidate': '250/min',
+    # },
 
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
