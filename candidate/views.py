@@ -209,7 +209,7 @@ class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['domain']
 
-    @action(methods=['POST'], detail=False)
+    @action(methods=['POST'], detail=True)
     def assign(self, request):
         serializer = ProjectAssignSerializer(data=request.data)
         if serializer.is_valid():

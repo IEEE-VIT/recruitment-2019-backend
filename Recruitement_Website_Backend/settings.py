@@ -67,9 +67,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_THROTTLE_RATES': {
         'anon': '10/min',
-        'user': '10/min',
-        'candidate': '30/min',
-        'recruiter': '15/min'
+        'candidate': '250/min',
     },
 
     'DEFAULT_PERMISSION_CLASSES': (
@@ -84,8 +82,6 @@ REST_FRAMEWORK = {
 
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2
 }
 
 AUTH_USER_MODEL = 'recruiter.User'
