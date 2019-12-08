@@ -16,6 +16,12 @@ class UserViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
     serializer_class = UserSerializer
 
 
+    @action(methods=['POST'], detail=False, permission_classes=[IsAuthenticated])
+    def get_logged_in_user(self, request):
+        logged_in_user = self.request.user
+        return Response({'user_id': logged_in_user.id}, status=200)
+
+
 class AuthViewSet(GenericViewSet):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer

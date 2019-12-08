@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.decorators import action
 
 from recruiter.models import User, AvailableRoom
 
@@ -8,6 +9,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
 
         fields = '__all__'
+
 
 
 class RegisterSerializer(serializers.Serializer):
