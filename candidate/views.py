@@ -185,7 +185,7 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
             return Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
                 interests__contains=candidate_interest).order_by(
                 'timestamp')
-        elif self.request.method == 'GET' and room_no is not None:
+        if self.request.method == 'GET' and room_no is not None:
             return Candidate.objects.filter(Q(called=True) & (Q(round_1_call=None) | Q(round_2_call=None))).filter(
                 room_number__exact=room_no).order_by(
                 'timestamp')
