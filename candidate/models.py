@@ -35,14 +35,14 @@ class Candidate(models.Model):
     answer3_text = models.TextField(blank=True, null=True)
 
     round_1_comment = models.TextField(blank=True)
-    round_1_call = models.BooleanField(default=None, null=True, blank=True)
+    round_1_call = models.BooleanField(default=False, null=True, blank=True)
 
     round_2_project_template = models.ForeignKey(ProjectTemplate, on_delete=models.PROTECT, default=None, null=True, blank=True)
     round_2_project_modification = models.TextField(default=None, blank=True, null=True)
     round_2_comment = models.TextField(default=None, null=True, blank=True)
     round_2_project_completion = models.IntegerField(default=0, null=True, blank=True)
     round_2_project_understanding = models.IntegerField(default=0, null=True, blank=True)
-    round_2_call = models.BooleanField(default=None, null=True, blank=True)
+    round_2_call = models.BooleanField(default=False, null=True, blank=True)
 
     called_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name="interviewee", null=True, blank=True)
 

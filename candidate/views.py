@@ -176,8 +176,8 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 	operation_description="Return A List Of Candidates Filtered According To Parameters Passed"
 ))
 class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
-	queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
-		'timestamp')
+	# queryset = Candidate.objects.filter(Q(called=False) & (Q(round_1_call=None) | Q(round_2_call=None))).order_by(
+	# 	'timestamp')
 	throttle_classes = [AnonRateThrottle]
 	serializer_class = CandidateSerializer
 	filter_backends = []
@@ -189,12 +189,12 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
 		print(room_no)
 		if self.request.method == 'GET' and candidate_interest is not None:  # for Interviewer
 			return Candidate.objects.filter(
-				Q(called=False) & Q(is_active=True) & Q(round_1_call=round_status) & Q(round_2_call=None)).filter(
+				Q(called=False) & Q(is_active=True) & Q(round_1_call=False) & Q(round_2_call=False)).filter(
 				interests__contains=candidate_interest).order_by('timestamp')
 
 		elif self.request.method == 'GET' and room_no is not None:  # for Moderator
 			return Candidate.objects.filter(
-				Q(called=True) & Q(is_active=True) & Q(round_1_call=round_status) & Q(round_2_call=None)).filter(
+				Q(called=True) & Q(is_active=True) & Q(round_1_call=False) & Q(round_2_call=False)).filter(
 				room_number__exact=room_no).order_by(
 				'timestamp')
 
