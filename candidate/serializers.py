@@ -16,6 +16,7 @@ class CandidateInterviewerSerializer(serializers.ModelSerializer):
 class CandidateSerializer(WritableNestedModelSerializer):
     recaptcha_field = ReCaptchaField()
     called_to = serializers.SerializerMethodField()
+    reg_no = serializers.RegexField(regex='^19[A-Z]{3}[0-9]{4}$')
 
     class Meta:
         model = Candidate
