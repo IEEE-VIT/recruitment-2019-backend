@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from recruiter.models import User
+from recruiter.models import User, AvailableRoom
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -16,3 +16,9 @@ class RegisterSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=100)
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
+
+
+class AvailableRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailableRoom
+        fields = ['room_number']

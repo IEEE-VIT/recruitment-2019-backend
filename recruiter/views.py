@@ -1,13 +1,13 @@
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action, permission_classes
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from recruiter.models import User
+from recruiter.models import User, AvailableRoom
 from recruiter.permissions import IsLoggedInUserOrAdmin
-from recruiter.serializers import RegisterSerializer, UserSerializer
+from recruiter.serializers import RegisterSerializer, UserSerializer, AvailableRoomSerializer
 
 
 class UserViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
@@ -53,3 +53,18 @@ class AuthViewSet(GenericViewSet):
         print(request.user.auth_token)
         request.user.auth_token.delete()
         return Response({'detail': "Successfully logged out"}, status=200)
+
+
+class AvailableRoomViewset(ModelViewSet):
+
+    queryset = AvailableRoom.objects.all()
+    serializer_class = AvailableRoomSerializer
+    pagination_class = None
+
+    def get_permissions(self):
+        if self.action == 'list':
+            self.permission_classes = [IsAuthenticated, ]
+        else:
+            self.permission_classes = [IsAdminUser, ]
+
+        return super(AvailableRoomViewset, self).get_permissions()

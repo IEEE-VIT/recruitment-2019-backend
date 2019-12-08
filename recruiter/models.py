@@ -17,3 +17,9 @@ class User(AbstractUser):
     def __str__(self):
         return "{}".format(self.email)
 
+
+class AvailableRoom(models.Model):
+    room_number = models.CharField(max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return self.room_number
