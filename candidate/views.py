@@ -190,12 +190,12 @@ class CandidateListViewSet(viewsets.GenericViewSet, ListModelMixin):
 		print(room_no)
 		if self.request.method == 'GET' and candidate_interest is not None:  # for Interviewer
 			return Candidate.objects.filter(
-				Q(called=False) & Q(is_active=True) & Q(round_1_call=False) & Q(round_2_call=False)).filter(
+				Q(called=False) & Q(is_active=True) & Q(round_1_call=False) & Q(round_2_call=False) & Q(interviewer_switch=False)).filter(
 				interests__contains=candidate_interest).order_by('timestamp')
 
 		elif self.request.method == 'GET' and room_no is not None:  # for Moderator
 			return Candidate.objects.filter(
-				Q(called=True) & Q(is_active=True) & Q(round_1_call=False) & Q(round_2_call=False)).filter(
+				Q(called=True) & Q(is_active=True) & Q(round_1_call=False) & Q(round_2_call=False) & Q(interviewer_switch=False)).filter(
 				room_number__exact=room_no).order_by(
 				'timestamp')
 
