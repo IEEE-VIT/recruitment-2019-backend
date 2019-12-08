@@ -3,7 +3,6 @@ from django.contrib import admin
 from candidate.models import Candidate, ProjectTemplate
 from django.contrib.admin import SimpleListFilter
 
-# admin.site.register(Candidate)
 admin.site.register(ProjectTemplate)
 
 
