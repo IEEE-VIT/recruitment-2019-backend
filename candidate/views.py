@@ -127,6 +127,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 
 	@action(methods=['POST'], detail=True, serializer_class=AcceptRejectSerializer)
 	def reject(self, request, **kwargs):
+		#Reject endpoint
 		candidate = self.get_object()
 		candidate.is_active = False
 		candidate.interviewer_switch = False
