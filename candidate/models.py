@@ -7,7 +7,7 @@ from recruiter.models import User
 
 class ProjectTemplate(models.Model):
     template_id = models.CharField(max_length=4, primary_key=True)
-    domain = models.CharField(max_length=20)
+    domain = models.CharField(max_length=100)
     title = models.TextField()
     body = models.TextField()
 
