@@ -129,6 +129,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 	def reject(self, request, **kwargs):
 		candidate = self.get_object()
 		candidate.is_active = False
+		candidate.interviewer_switch = False
 		candidate.called = False
 		round_no = request.data.get('round')
 		print(type(round_no))
