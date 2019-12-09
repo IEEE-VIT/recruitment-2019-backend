@@ -98,7 +98,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 	def invalidate(self, request, **kwargs):
 		candidate = self.get_object()
 		candidate.is_active = False
-
+		candidate.interviewer_switch = False
 		subject = "IEEE - VIT | Recruitment Notification"
 		body = f"Dear {candidate.name},<br>We attempted to call you for your interview but were unable to reach you. We also sent you notification, but you were not available which is why we had to invalidate your entry. Please report to any of the moderators in case you are still interested. <br><br>Warm Regards,<br>Team IEEE - VIT"
 
@@ -164,7 +164,7 @@ class CandidateViewSet(viewsets.GenericViewSet, CreateModelMixin, UpdateModelMix
 			f"Regards,<br>Team IEEE - VIT. "
 		mail_to = candidate.email
 
-		# send_email_to_candidate(mail_to, mail_subject, mail_body)
+		send_email_to_candidate(mail_to, mail_subject, mail_body)
 		candidate.save()
 		return Response({'detail': 'Candidate called!'}, status=200)
 
@@ -232,7 +232,7 @@ class ProjectTemplateViewSet(viewsets.GenericViewSet, ListModelMixin):
 			candidate.round_2_project_modification = serializer.data['modification_body']
 			candidate.save()
 			subject = "IEEE - VIT | Round 2 Project"
-			body = f"Dear Applicant,<br>Congratulations on clearing the first round of interviews. You have been assigned the following project:<br><code>{candidate.round_2_project_template.body}<br>A few more instructions:<br>{candidate.round_2_project_modification}</code><br>Do your very best!<br>Warm Regards,<br>Team IEEE - VIT"
+			body = f"Dear Applicant,<br>Congratulations on clearing the first round of interviews. You have been assigned the following project:<br><code>{candidate.round_2_project_template.body}<br>If, there are any modifications to your project, please find them below:<br>{candidate.round_2_project_modification}</code>Please email your work to ieeevitsubmissions@gmail.com <br>Do your very best!<br>Warm Regards,<br>Team IEEE - VIT"
 			send_email_to_candidate(candidate_email=candidate.email, subject=subject, mail_body=body)
 			return Response({'detail': "The email has been sent to the candidate"}, status=200)
 		else:
